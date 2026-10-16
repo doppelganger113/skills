@@ -30,8 +30,24 @@ rm -rf ~/.claude/skills/go-architecture
 cp -R skills/skills/go-architecture ~/.claude/skills/
 ```
 
-For a single project, use that repo's `.claude/skills/` instead of
-`~/.claude/skills/`.
+**Claude Code**, for one repository: copy a single skill into that
+repo's `.claude/skills/` and commit it, so everyone who clones the repo
+gets it. For example, `go-architecture` into a Go repository:
+
+```sh
+git clone --depth 1 https://github.com/doppelganger113/skills.git /tmp/agent-skills
+cd /path/to/your-repo
+mkdir -p .claude/skills
+cp -R /tmp/agent-skills/skills/go-architecture .claude/skills/
+git add .claude/skills/go-architecture
+git commit -m "Add go-architecture skill"
+```
+
+Claude Code picks it up the next time it starts in that repo. To
+update, run `rm -rf .claude/skills/go-architecture` before copying
+again. The skill's example has its own `go.mod` and sits in a
+directory Go tooling skips (names starting with `.`), so it doesn't
+affect the repo's build, tests or lint.
 
 **Claude apps (claude.ai, desktop):** zip the skill folder and upload
 the zip as a custom skill in the app's settings.
