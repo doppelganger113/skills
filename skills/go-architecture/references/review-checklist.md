@@ -38,12 +38,14 @@ on an existing Go codebase.
 **Errors and context**
 - [ ] Errors wrapped with context, handled once.
 - [ ] Driver errors translated at the store.
+- [ ] No typed nil pointer returned as an `error`.
 - [ ] One error envelope; each handler maps only its domain's errors.
 - [ ] `ctx` first on I/O functions, never stored.
 
 **Lifecycle and concurrency**
 - [ ] Graceful shutdown; server timeouts set.
 - [ ] Every goroutine has an owner and a stop path.
+- [ ] Fan-out is bounded; no lock held across I/O or a callback.
 - [ ] Tests pass with `-race`.
 
 **Readability**

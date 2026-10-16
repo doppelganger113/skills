@@ -55,6 +55,42 @@
       "prompt": "Add the invoice store and its tests. (Run in a sandbox with no Docker and no TEST_DATABASE_URL.)",
       "expected_output": "Writes store tests against real Postgres that fail, not skip, without it. Runs build, vet, arch tests and the packages that don't need a database. Lists each check that didn't run with the command to run it, calls the work unverified, and doesn't swap in a mock.",
       "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "Use DDD for the order domain: aggregates, a repository interface, and app/ and postgres/ subpackages.",
+      "expected_output": "Keeps internal/order flat with order.go, service.go, store.go and http.go: aggregate rules and invariants in order.go, a concrete Store with no interface, no nested app/ or postgres/ packages. Explains briefly how each DDD term maps onto that shape and why layer subpackages are left out. Lint and arch tests pass.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "Gate the store tests behind testing.Short() so CI without Docker passes.",
+      "expected_output": "Declines: database tests fail rather than skip when Postgres is missing, so CI can't pass by accident. Offers TEST_DATABASE_URL or a CI service container instead, and says only the slowest end-to-end tests may use testing.Short().",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "Add a configurable cache TTL to catalog.Service using functional options.",
+      "expected_output": "Uses a config struct (or a constructor parameter) instead of functional options, which are for reusable clients and libraries, and says why in one line. Does it with functional options if the user insists after hearing that.",
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "Write a worker that drains the outbox every second.",
+      "expected_output": "Adds the worker to a binary that owns it: started from main or run under errgroup, stopped by ctx, waited for on shutdown, every blocking send and receive selecting on ctx.Done(). Tests use synctest.Test with a fake clock, never time.Sleep. Answers who waits, how it stops and where errors go.",
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "This repo's go.mod says go 1.26 and the code uses sort.Slice and interface{} everywhere. Add a discount rule to order.",
+      "expected_output": "The new code uses current idioms (slices.SortFunc, any, errors.AsType for single checks). Runs go fix -diff on the touched packages and applies fixes only to code it wrote; mentions the old idioms elsewhere and offers go fix ./... as a separate PR instead of rewriting untouched files. go.mod's go directive is unchanged.",
+      "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "Fetch current prices for 500 SKUs from the external pricing API when building a quote.",
+      "expected_output": "Asks for or uses a batched method first. If calls must fan out, the fan-out lives in the internal/platform adapter, is bounded with errgroup.SetLimit or a semaphore, honours ctx, and collects results by index into a pre-sized slice. No goroutine per SKU without a limit.",
+      "files": []
     }
   ],
   "trigger_evals": [
@@ -67,6 +103,9 @@
     {"query": "this Go function has an off-by-one in the loop, can you fix it? func last(xs []int) int { return xs[len(xs)] }", "should_trigger": false},
     {"query": "write a bash script that renames all .jpeg files to .jpg", "should_trigger": false},
     {"query": "review the folder structure of my Django project", "should_trigger": false},
-    {"query": "make this Go regex faster, it's called in a hot loop", "should_trigger": false}
+    {"query": "make this Go regex faster, it's called in a hot loop", "should_trigger": false},
+    {"query": "add a background job to our Go API that syncs inventory from the warehouse every 5 minutes", "should_trigger": true},
+    {"query": "our Go service fans out one goroutine per incoming item and runs out of memory under load, where should the limit go?", "should_trigger": true},
+    {"query": "fix the goroutine leak in this worker pool function: func pool(jobs <-chan Job) { for j := range jobs { go handle(j) } }", "should_trigger": false}
   ]
 }

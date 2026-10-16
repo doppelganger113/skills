@@ -73,8 +73,7 @@ func Decode(w http.ResponseWriter, r *http.Request, v any) bool {
 	if err == nil {
 		return true
 	}
-	var tooLarge *http.MaxBytesError
-	if errors.As(err, &tooLarge) {
+	if _, ok := errors.AsType[*http.MaxBytesError](err); ok {
 		Problem(w, http.StatusRequestEntityTooLarge, "request.too_large", "request body too large")
 	} else {
 		Problem(w, http.StatusBadRequest, "request.malformed", decodeDetail(err))

@@ -6,6 +6,11 @@ linters:
     - errorlint
     - bodyclose
     - noctx
+    # Flags idioms older than the module's go version (sort.Slice,
+    # interface{}, hand-rolled loops that slices or maps cover). Agents
+    # write in the idioms of their training data, so this keeps copies
+    # of the example current.
+    - modernize
   settings:
     depguard:
       rules:

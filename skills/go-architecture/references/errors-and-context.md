@@ -37,6 +37,17 @@ func (e *ValidationError) Error() string {
   `fmt.Errorf("get order %s: %w", id, err)`. Say what you were doing,
   not "failed to".
 - Translate infrastructure errors at the store (`persistence.md`).
+- `%w` makes the wrapped error part of your API: callers can match it
+  with `errors.Is`/`errors.As`, and swapping it later breaks them. Wrap
+  with `%w` inside a domain and for errors you document; use `%v` where
+  a third-party error would otherwise leak across a package boundary.
+- Go 1.26+: a single type check is
+  `if verr, ok := errors.AsType[*ValidationError](err); ok`. Keep
+  `errors.As` in `switch` mappings like the one below, where a case
+  can't declare a variable.
+- On success return a literal `nil`, never a typed nil pointer
+  (`var e *MyErr; return e`): the interface is then non-nil and every
+  caller's `err != nil` check fires.
 - Handle each error once: return it wrapped, or log it and stop.
 - `panic` only for programmer errors at start-up. Recovery middleware is
   a safety net, not error handling.
@@ -183,13 +194,32 @@ first.
 ## Concurrency ownership
 
 - Whoever starts a goroutine owns it: it can stop it and waits for it.
-  `errgroup.WithContext` for work that should fail together, for
+  Before writing `go`, answer three questions: who waits for it, how it
+  is told to stop, and where its errors and panics go. If one has no
+  answer, don't start it.
+- `errgroup.WithContext` for work that should fail together, for
   example the HTTP server and a background relay in one binary.
+  `sync.WaitGroup.Go` for fan-out that returns no errors; its function
+  must not panic.
+- Prefer synchronous APIs and let the caller add concurrency. A
+  function that starts goroutines it doesn't wait for is hard to test
+  and to shut down.
 - No fire-and-forget `go f()` in handlers; work that outlives the
   request goes to a queue or worker with its own lifecycle.
-- A mutex sits next to the data it guards. Channels for real pipelines,
-  not as a lock.
-- `go test -race` in CI.
+- Bound fan-out over input you don't control: `errgroup.SetLimit(n)`
+  or a buffered-channel semaphore, never one goroutine per item. Before
+  fanning out calls to another system, ask for a batched method.
+- Collect fan-out results by writing to a slice pre-sized to the input,
+  each goroutine at its own index; no mutex needed.
+- In a worker or pipeline stage, every blocking send **and** receive
+  sits in a `select` with `<-ctx.Done()`; guarding only the send still
+  leaks a goroutine parked on an empty input.
+- A mutex sits next to the data it guards. Never hold it across I/O, a
+  callback or a channel send: copy what you need, unlock, then act.
+  Don't embed `sync.Mutex` in an exported type; that publishes `Lock`
+  and `Unlock`. Channels for real pipelines, not as a lock.
+- `go test -race` in CI. It only sees races on paths the tests run, so
+  concurrent code needs tests that run it concurrently.
 
 ## Observability and auth at scale
 
