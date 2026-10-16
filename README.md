@@ -43,9 +43,12 @@ cd skills/skills && zip -r go-architecture.zip go-architecture
 ## Quality checks
 
 Skills with runnable examples are checked in CI on every change (see
-`.github/workflows/`). For `go-architecture` that means `go vet`,
-`go test -race` (including the architecture tests) and
+`.github/workflows/`). For `go-architecture` that means `gofmt`,
+`go vet` and `go test -race` (including the architecture tests) on both
+the oldest Go version in `go.mod` and the current stable release, plus
 `golangci-lint` with the example's own config, all at zero issues.
+Workflow actions are pinned to commit SHAs and kept current by
+Dependabot.
 
 ## License
 

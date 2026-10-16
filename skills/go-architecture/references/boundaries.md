@@ -208,7 +208,7 @@ nested inside each other (split `order/` into `order/` and
 `fulfilment/`, not `order/fulfilment/`). That way a new domain is
 covered with no config change.
 
-Config for golangci-lint v2 (tested against v2.5; the same file is in
+Config for golangci-lint v2 (tested against v2.15; the same file is in
 `examples/shop/.golangci.yml`):
 
 ```yaml

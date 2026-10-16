@@ -14,19 +14,36 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   example:
-    name: golden example
+    name: golden example (Go ${{ matrix.go }})
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        # oldest: the minimum in go.mod, so the example keeps building for
+        # anyone on it. stable: the current release, so new vet checks and
+        # deprecations show up here first.
+        go: [oldest, stable]
     defaults:
       run:
         working-directory: skills/go-architecture/examples/shop
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
+      # Actions are pinned to commit SHAs (tags can be moved); Dependabot
+      # keeps them current.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          go-version-file: skills/go-architecture/examples/shop/go.mod
+          persist-credentials: false
+
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: ${{ matrix.go == 'oldest' && 'skills/go-architecture/examples/shop/go.mod' || '' }}
+          go-version: ${{ matrix.go == 'stable' && 'stable' || '' }}
           cache: false # the example has no dependencies, so no go.sum
 
       - name: gofmt
@@ -39,7 +56,8 @@ jobs:
         run: go test -race -count=1 ./...
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
+        if: matrix.go == 'stable'
+        uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
-          version: v2.5.0
+          version: v2.15.0
           working-directory: skills/go-architecture/examples/shop
