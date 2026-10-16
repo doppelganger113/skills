@@ -1,0 +1,45 @@
+name: go-architecture
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/go-architecture/**"
+      - ".github/workflows/go-architecture.yml"
+  pull_request:
+    paths:
+      - "skills/go-architecture/**"
+      - ".github/workflows/go-architecture.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  example:
+    name: golden example
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: skills/go-architecture/examples/shop
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: skills/go-architecture/examples/shop/go.mod
+          cache: false # the example has no dependencies, so no go.sum
+
+      - name: gofmt
+        run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go test (race, includes architecture tests)
+        run: go test -race -count=1 ./...
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.5.0
+          working-directory: skills/go-architecture/examples/shop

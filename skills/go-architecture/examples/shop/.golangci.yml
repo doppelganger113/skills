@@ -1,0 +1,57 @@
+version: "2"
+
+linters:
+  enable:
+    - depguard
+    - errorlint
+    - bodyclose
+    - noctx
+  settings:
+    depguard:
+      rules:
+        # Business logic stays free of transport, SQL and vendor SDKs. The
+        # rule is by file-naming convention, so a new domain is covered
+        # without editing this file: adapters live in http*.go and
+        # store*.go, and domains are siblings under internal/, never
+        # nested. Strict mode: only the standard library and this module
+        # are allowed; add a pure library (uuid, decimal) to allow by name.
+        business-logic-is-pure:
+          list-mode: strict
+          files:
+            - "**/internal/*/*.go"
+            - "!**/internal/*/http*.go"
+            - "!**/internal/*/store*.go"
+            - "!**/internal/*/internal/db/**"
+            - "!**/internal/platform/**"
+            - "!$test"
+          allow:
+            - $gostd
+            - example.com/shop/internal
+          deny:
+            - pkg: net/http
+              desc: transport belongs in http.go
+            - pkg: database/sql
+              desc: persistence belongs in store.go
+            - pkg: github.com/jackc/pgx
+              desc: persistence belongs in store.go
+            - pkg: example.com/shop/internal/platform/postgres
+              desc: only store files touch the database
+        # Infrastructure never depends on a domain. The longer allow
+        # entry wins over the deny, so platform packages may still use
+        # each other.
+        platform-imports-no-domain:
+          list-mode: lax
+          files:
+            - "**/internal/platform/**"
+          allow:
+            - example.com/shop/internal/platform
+          deny:
+            - pkg: example.com/shop/internal
+              desc: platform must not depend on a domain
+  exclusions:
+    rules:
+      # S1016 suggests converting between wire types and domain types.
+      # They are separate on purpose so the API contract and the domain
+      # can evolve independently; an explicit literal keeps that visible.
+      - linters: [staticcheck]
+        text: "S1016"
