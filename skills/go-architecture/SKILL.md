@@ -45,7 +45,7 @@ little, while speculative structure is paid for on every change.
    golangci-lint), name each check that didn't run and why, call the
    work unverified, and give the command to run; never report it as
    done or passing. Never add skip-if-unavailable logic to make a
-  missing dependency look green (`references/testing.md`).
+   missing dependency look green (`references/testing.md`).
 7. **Say what structure you added and which trigger justified it,** in
    one or two sentences. In a Stage 3 repo, offer an ADR in `docs/adr/`.
 8. **Turn corrections into rules.** Fix the code first. Then, when the

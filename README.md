@@ -10,7 +10,7 @@ examples it reads on demand.
 
 | Skill | What it does |
 |---|---|
-| [go-architecture](skills/go-architecture/SKILL.md) | Architecture rules for Go code that stays clean as it grows from a small tool to a large multi-team codebase: structure in stages added only when a trigger fires, feature packages instead of MVC layers, enforced dependency boundaries, and a tested golden example with lint rules and architecture tests. |
+| [go-architecture](skills/go-architecture/SKILL.md) ([design notes](docs/go-architecture.md)) | Architecture rules for Go code that stays clean as it grows from a small tool to a large multi-team codebase: structure in stages added only when a trigger fires, feature packages instead of MVC layers, enforced dependency boundaries, and a tested golden example with lint rules and architecture tests. |
 
 ## Install
 
@@ -42,8 +42,9 @@ cd skills/skills && zip -r go-architecture.zip go-architecture
 
 ## Quality checks
 
-Skills with runnable examples are checked in CI on every change (see
-`.github/workflows/`). For `go-architecture` that means `gofmt`,
+Every push and pull request runs `scripts/check_skills.py`, which checks
+each skill's structure and frontmatter. Skills with runnable examples
+are also checked in CI on every change (see `.github/workflows/`). For `go-architecture` that means `gofmt`,
 `go vet` and `go test -race` (including the architecture tests) on both
 the oldest Go version in `go.mod` and the current stable release, plus
 `golangci-lint` with the example's own config, all at zero issues.

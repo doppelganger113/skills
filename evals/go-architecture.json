@@ -1,0 +1,72 @@
+{
+  "skill_name": "go-architecture",
+  "notes": "evals: behaviour prompts in the skill-creator evals.json shape (prompt + expected_output). trigger_evals: description-triggering checks in the skill-creator trigger shape (query + should_trigger). Walk these after changing the skill's behaviour.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write a small Go CLI that renames the photos in a folder by their EXIF date, like 2026-10-16_143002.jpg. Dry-run flag please.",
+      "expected_output": "Stage 1: main.go plus a few files in one package, run(ctx, args, stdout, stderr) error, no cmd/ or internal/, no interfaces, no lint config or arch_test copied in. Tests with testdata/. States it stayed flat because no trigger applies.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Start a new Go service for invoicing. It's small now but it'll grow into a big system and other teams will join later. Postgres for storage.",
+      "expected_output": "Stage 2 with Stage-3 habits: cmd/api/main.go wiring, internal/invoice with invoice.go, service.go, store.go, http.go, internal/platform for web and postgres. .golangci.yml and arch_test.go copied in with the module path changed. No Stage 3 machinery (no per-domain lint map, owners or events) because planned teams aren't a trigger. go.mod on current stable Go. Says which choices came from which trigger.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "In my Stage 2 repo, add GET /customers/{id}/invoices.",
+      "expected_output": "The endpoint lives in the invoice package, not customer. Paginated with limit and an opaque cursor, response {items, next_cursor}, Page type in internal/platform/page. A store method like ListByCustomer. No reads of the customer tables; unknown customer returns an empty list unless the product needs 404.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Add a Stripe refund to the order domain.",
+      "expected_output": "Stripe client in internal/platform/stripe, never in a domain file. The consumer interface in order (PaymentGateway if it exists) gains a Refund method, sized to what order calls, with no Stripe types in its contract. The refund is saved first, the provider is called outside any transaction with its own key (refund-<refundID>, never the charge's key), then the result is recorded. Lint and arch tests pass.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "This repo has models/, controllers/ and services/ folders and two import cycles. Clean it up.",
+      "expected_output": "Maps the import graph with go list -e first. Plans small, separately mergeable steps: replace cross-model struct references with IDs, migrate leaf domains first into internal/<domain>/, rename to drop stutter, delete empty layer packages, then add the lint rules. Does not attempt a big-bang rewrite.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Build me a todo list web app in Go using MVC.",
+      "expected_output": "Explains briefly how MVC maps to Go here (handler, service, store, response types or templates) and builds one feature package for todos, not models/ controllers/ views/ folders. Size-appropriate: no platform adapters, interfaces or idempotency machinery.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Add an interface for the order store so I can mock it in the service tests.",
+      "expected_output": "Pushes back: one implementation and no trigger. Proposes testing the service against the real store instead, and names the case where an interface would be justified. Adds it only if the user insists after hearing that.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "I told you last time: never put validation logic in HTTP handlers. Fix the new endpoint.",
+      "expected_output": "Fixes the code first. Treats it as a general correction and encodes it: a CLAUDE.md line, because an arch test banning validation in http*.go would flag handlers that reject malformed JSON. Says which it changed.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Add the invoice store and its tests. (Run in a sandbox with no Docker and no TEST_DATABASE_URL.)",
+      "expected_output": "Writes store tests against real Postgres that fail, not skip, without it. Runs build, vet, arch tests and the packages that don't need a database. Lists each check that didn't run with the command to run it, calls the work unverified, and doesn't swap in a mock.",
+      "files": []
+    }
+  ],
+  "trigger_evals": [
+    {"query": "new go service for subscriptions, should be structured properly from the start, we'll add billing and notifications later", "should_trigger": true},
+    {"query": "where should the retry logic for our webhook sender go in this Go repo? internal/webhook or platform?", "should_trigger": true},
+    {"query": "review the package structure of this go project, I think it's turning into spaghetti", "should_trigger": true},
+    {"query": "add an endpoint to cancel an order in the Go API", "should_trigger": true},
+    {"query": "how do I do MVC in Go", "should_trigger": true},
+    {"query": "what's the difference between a slice and an array in Go?", "should_trigger": false},
+    {"query": "this Go function has an off-by-one in the loop, can you fix it? func last(xs []int) int { return xs[len(xs)] }", "should_trigger": false},
+    {"query": "write a bash script that renames all .jpeg files to .jpg", "should_trigger": false},
+    {"query": "review the folder structure of my Django project", "should_trigger": false},
+    {"query": "make this Go regex faster, it's called in a hot loop", "should_trigger": false}
+  ]
+}
