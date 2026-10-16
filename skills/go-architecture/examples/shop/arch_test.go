@@ -41,7 +41,7 @@ func loadFiles(t *testing.T) (module string, files []goFile) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, line := range strings.Split(string(mod), "\n") {
+	for line := range strings.SplitSeq(string(mod), "\n") {
 		if rest, ok := strings.CutPrefix(line, "module "); ok {
 			module = strings.TrimSpace(rest)
 		}
