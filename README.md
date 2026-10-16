@@ -48,7 +48,8 @@ Skills with runnable examples are checked in CI on every change (see
 the oldest Go version in `go.mod` and the current stable release, plus
 `golangci-lint` with the example's own config, all at zero issues.
 Workflow actions are pinned to commit SHAs and kept current by
-Dependabot.
+Dependabot. A weekly scheduled run also tests against the newest Go and
+golangci-lint, so breakage shows up even when nothing changes here.
 
 ## License
 

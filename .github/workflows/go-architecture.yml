@@ -10,6 +10,11 @@ on:
     paths:
       - "skills/go-architecture/**"
       - ".github/workflows/go-architecture.yml"
+  # Weekly run even without commits: new stable Go and the newest
+  # golangci-lint can break the example while nobody is touching it.
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -55,9 +60,12 @@ jobs:
       - name: go test (race, includes architecture tests)
         run: go test -race -count=1 ./...
 
+      # Pinned for reproducible pushes and PRs. The weekly run uses the
+      # newest release instead; when it fails, fix the example and bump
+      # the pin. Dependabot can't update this version.
       - name: golangci-lint
         if: matrix.go == 'stable'
         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
-          version: v2.15.0
+          version: ${{ github.event_name == 'schedule' && 'latest' || 'v2.15.0' }}
           working-directory: skills/go-architecture/examples/shop

@@ -146,7 +146,9 @@ stutter (`models.User`).
 
 ## Default stack
 
-Use what the repo already uses. For new code: stdlib `net/http`
+Use what the repo already uses. For new code: the current stable Go
+release in `go.mod` (Go supports only the two newest releases, so never
+start below the older of those), stdlib `net/http`
 `ServeMux` (method and path patterns), `log/slog`, Postgres through
 `database/sql` with the pgx driver (or `pgxpool` directly), `sqlc` once
 there are more than a handful of queries, one migration tool (goose or
