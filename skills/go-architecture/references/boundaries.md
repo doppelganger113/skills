@@ -42,7 +42,9 @@ Only at a boundary where one of these holds:
 
 Declare it in the consumer's package, next to the code that uses it,
 with only the methods the consumer calls. Don't put an interface in
-front of your own store to mock it; test against the real store.
+front of your own store to mock it; test against the real store. A
+dependency that is one call (the clock, an ID or random source) is a
+func parameter, `func() time.Time`, not a one-method interface.
 
 ## Designing a consumer interface
 

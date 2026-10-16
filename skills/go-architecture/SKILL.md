@@ -1,6 +1,6 @@
 ---
 name: go-architecture
-description: Architecture and design rules for Go code that stays clean as it grows from a small tool to a large multi-team codebase. Use when creating any Go program (service, API, worker or CLI), adding a feature or endpoint, deciding where code goes, adding packages, interfaces, stores or handlers, restructuring or refactoring a Go repo, or reviewing its structure, including requests for "MVC", "clean architecture" or "how should I structure this". Small tools get a minimal flat layout. Not for Go syntax questions or fixes contained inside one function.
+description: Architecture and design rules for Go code that stays clean as it grows from a small tool to a large multi-team codebase. Use when creating any Go program (service, API, worker or CLI), adding a feature or endpoint, deciding where code goes, adding packages, interfaces, stores or handlers, restructuring or refactoring a Go repo, or reviewing its structure, including requests for "MVC", "SOLID", "clean architecture" or "how should I structure this". Small tools get a minimal flat layout. Not for Go syntax questions or fixes contained inside one function.
 ---
 
 # Go architecture
@@ -86,7 +86,7 @@ little, while speculative structure is paid for on every change.
 | A Stage 1 program passes ~2-3k lines or has two unrelated concerns | Stage 2 |
 | A second domain whose rules don't belong with the first | A new package under `internal/` |
 | Two packages need each other | Break the cycle (`references/boundaries.md`), never a `common` package |
-| A second real implementation; a dependency that can't run in tests (third-party API, payments, email, clock); or another domain that is owned by a different team or expected to move out of process | A small interface declared by the consumer |
+| A second real implementation; a dependency that can't run in tests (third-party API, payments, email, clock); or another domain that is owned by a different team or expected to move out of process | A small interface declared by the consumer; a func (`func() time.Time`) when the dependency is one call, like the clock or an ID generator |
 | A package past ~15-20 files or with unrelated reasons to change | Split by sub-domain, never by layer |
 | A second team, or other domains reaching into a domain's internals | Stage 3 enforcement |
 
@@ -117,9 +117,13 @@ little, while speculative structure is paid for on every change.
   opens connections, builds every component with plain constructors and
   owns the lifecycle. No `init()` side effects, no package-level mutable
   state, no DI containers or service locators.
-- **Accept interfaces, return structs.** Constructors return concrete
-  types. Interfaces are declared by the consumer, sized to what it calls,
-  and justified by a trigger above.
+- **Constructors take dependencies as parameters and return concrete
+  types.** That is all the dependency injection Go needs, wired by hand
+  in `main`. Parameters are concrete types by default; a dependency that
+  is one call (clock, ID generator) is a func, `func() time.Time`.
+  Accept an interface only when a trigger above fires, declared by the
+  consumer and sized to what it calls. The proverb "accept interfaces,
+  return structs" applies at those triggers, not to every parameter.
 - **Cross-domain default: import directly.** Domain A calls
   `*b.Service` from B's exported API. Switch to a consumer-declared
   interface only when the interface trigger above fires; then make its
@@ -146,6 +150,19 @@ Never create top-level `models/`, `controllers/`, `views/`, `services/`
 or `repositories/` packages: every feature change then touches every
 package, related models import each other into cycles, and names
 stutter (`models.User`).
+
+## SOLID, translated to Go
+
+When someone asks for SOLID, apply it as below and say briefly how.
+Never add interfaces, layers or extension points in its name.
+
+| Principle | In Go |
+|---|---|
+| Single responsibility | Each package, type and function has one reason to change. Split a package with unrelated reasons to change by sub-domain, never by layer. |
+| Open-closed | Extend by adding a type, func or method when a real need appears. No plugin points or base types built in advance. |
+| Liskov substitution | Every implementation of an interface, fakes included, honours its documented contract, including errors and edge cases. |
+| Interface segregation | Interfaces are declared by the consumer and hold only the methods it calls. |
+| Dependency inversion | Business logic never imports transport or storage, and `platform/` imports no domain. Beyond that, depend on an interface only at a trigger (none at Stage 1); otherwise use concrete types or funcs, passed to constructors and wired in `main`. No DI containers. |
 
 ## Default stack
 

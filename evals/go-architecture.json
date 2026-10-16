@@ -91,6 +91,12 @@
       "prompt": "Fetch current prices for 500 SKUs from the external pricing API when building a quote.",
       "expected_output": "Asks for or uses a batched method first. If calls must fan out, the fan-out lives in the internal/platform adapter, is bounded with errgroup.SetLimit or a semaphore, honours ctx, and collects results by index into a pre-sized slice. No goroutine per SKU without a limit.",
       "files": []
+    },
+    {
+      "id": 16,
+      "prompt": "Refactor the order service in my Stage 2 repo to follow SOLID principles.",
+      "expected_output": "Maps each SOLID letter to the skill's rules in a few lines. Adds no interface in front of order's own Store or the catalog Service, and none for the clock or ID generator (those stay funcs). Keeps constructor injection wired by hand in main, with no DI container. Changes only code that breaks an existing rule and names the rule for each change; if nothing breaks one, says so instead of restructuring.",
+      "files": []
     }
   ],
   "trigger_evals": [
@@ -106,6 +112,8 @@
     {"query": "make this Go regex faster, it's called in a hot loop", "should_trigger": false},
     {"query": "add a background job to our Go API that syncs inventory from the warehouse every 5 minutes", "should_trigger": true},
     {"query": "our Go service fans out one goroutine per incoming item and runs out of memory under load, where should the limit go?", "should_trigger": true},
-    {"query": "fix the goroutine leak in this worker pool function: func pool(jobs <-chan Job) { for j := range jobs { go handle(j) } }", "should_trigger": false}
+    {"query": "fix the goroutine leak in this worker pool function: func pool(jobs <-chan Job) { for j := range jobs { go handle(j) } }", "should_trigger": false},
+    {"query": "make my Go service follow SOLID, especially dependency inversion", "should_trigger": true},
+    {"query": "explain the SOLID principles with Java examples", "should_trigger": false}
   ]
 }
