@@ -86,7 +86,7 @@ little, while speculative structure is paid for on every change.
 | A Stage 1 program passes ~2-3k lines or has two unrelated concerns | Stage 2 |
 | A second domain whose rules don't belong with the first | A new package under `internal/` |
 | Two packages need each other | Break the cycle (`references/boundaries.md`), never a `common` package |
-| A second real implementation; a dependency that can't run in tests (third-party API, payments, email, clock); or another domain that is owned by a different team or expected to move out of process | A small interface declared by the consumer; a func (`func() time.Time`) when the dependency is one call, like the clock or an ID generator |
+| A second real implementation; a dependency that can't run in tests (third-party API, payments, email) or isn't deterministic (clock, IDs); or another domain that is owned by a different team or expected to move out of process | A small interface declared by the consumer; a func (`func() time.Time`) for a stateless source like the clock or an ID generator |
 | A package past ~15-20 files or with unrelated reasons to change | Split by sub-domain, never by layer |
 | A second team, or other domains reaching into a domain's internals | Stage 3 enforcement |
 
@@ -119,8 +119,10 @@ little, while speculative structure is paid for on every change.
   state, no DI containers or service locators.
 - **Constructors take dependencies as parameters and return concrete
   types.** That is all the dependency injection Go needs, wired by hand
-  in `main`. Parameters are concrete types by default; a dependency that
-  is one call (clock, ID generator) is a func, `func() time.Time`.
+  in `main`. Parameters are concrete types by default. A stateless
+  source that tests must control (clock, ID generator) is a func,
+  `func() time.Time`; a dependency with a contract to document, like
+  `PaymentGateway`, stays an interface.
   Accept an interface only when a trigger above fires, declared by the
   consumer and sized to what it calls. The proverb "accept interfaces,
   return structs" applies at those triggers, not to every parameter.
@@ -154,15 +156,16 @@ stutter (`models.User`).
 ## SOLID, translated to Go
 
 When someone asks for SOLID, apply it as below and say briefly how.
-Never add interfaces, layers or extension points in its name.
+Add an interface, layer or extension point only when a trigger above
+fires, never because SOLID was asked for.
 
 | Principle | In Go |
 |---|---|
-| Single responsibility | Each package, type and function has one reason to change. Split a package with unrelated reasons to change by sub-domain, never by layer. |
-| Open-closed | Extend by adding a type, func or method when a real need appears. No plugin points or base types built in advance. |
+| Single responsibility | A domain package owns one area of the business; files inside it split by role (`http.go`, `store.go`), and each type and function does one job. Split a package whose parts serve unrelated areas by sub-domain, never by layer. |
+| Open-closed | Extend by adding a type, func or method when a real need appears. No plugin points or base types built in advance. Editing existing code is fine; the compiler finds every caller. |
 | Liskov substitution | Every implementation of an interface, fakes included, honours its documented contract, including errors and edge cases. |
 | Interface segregation | Interfaces are declared by the consumer and hold only the methods it calls. |
-| Dependency inversion | Business logic never imports transport or storage, and `platform/` imports no domain. Beyond that, depend on an interface only at a trigger (none at Stage 1); otherwise use concrete types or funcs, passed to constructors and wired in `main`. No DI containers. |
+| Dependency inversion | From Stage 2, follow the dependency rules above. A service depending on its own domain's concrete `*Store` is intended. Beyond that, depend on an interface only at a trigger; otherwise use concrete types or funcs, passed to constructors and wired in `main`. No DI containers. |
 
 ## Default stack
 

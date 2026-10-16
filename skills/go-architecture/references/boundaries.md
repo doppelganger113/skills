@@ -43,8 +43,10 @@ Only at a boundary where one of these holds:
 Declare it in the consumer's package, next to the code that uses it,
 with only the methods the consumer calls. Don't put an interface in
 front of your own store to mock it; test against the real store. A
-dependency that is one call (the clock, an ID or random source) is a
-func parameter, `func() time.Time`, not a one-method interface.
+stateless source that tests must control (the clock, an ID or random
+source) is a func parameter, `func() time.Time`, not an interface. A
+dependency with a contract to document, like `PaymentGateway`, stays an
+interface even with one method.
 
 ## Designing a consumer interface
 

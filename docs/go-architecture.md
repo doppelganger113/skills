@@ -143,7 +143,7 @@ instead of the exact rules. `scripts/check_skills.py` enforces this.
 | Top-level MVC packages | Cycles, stutter, every change touches every package. |
 | Generic `Repository[T]` | Hides the SQL that matters and fits no real query well. |
 | DI containers and service locators | Hide the object graph; `main` wiring by hand is short and explicit. |
-| Dependency inversion as "always depend on abstractions" | An interface per struct, fakes for code that runs fine in tests, and one more hop per call. Go interfaces are satisfied implicitly, so a consumer can add one later without touching the provider. |
+| Dependency inversion as "always depend on abstractions" | An interface per struct, fakes for code that runs fine in tests, and one more indirection to read through. Go interfaces are satisfied implicitly, so a consumer can add one later without touching the provider. |
 | Generated call-sequence mocks | Test the implementation and break on refactors. |
 | `pkg/` in applications | Signals "importable by outsiders" when nothing is. |
 | A separate template repo as the source of truth | Claude usually can't reach it, and two copies drift. The example lives in the skill and CI tests it. |
