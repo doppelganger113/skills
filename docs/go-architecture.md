@@ -94,6 +94,32 @@ would flag handlers that correctly reject malformed JSON.
 dependency-free and CI-verifiable anywhere. The Postgres pattern in
 `references/persistence.md` was compile-checked separately.
 
+**Current idioms are enforced by tools, not described.**
+([Workflow](../skills/go-architecture/SKILL.md#workflow) step 6) The Go
+team reports that LLM assistants write in the idioms of their training
+data and ignore general instructions to use newer ones
+([go.dev/blog/gofix](https://go.dev/blog/gofix)). `go fix` modernizers
+and the `modernize` linter rewrite only to what each file's Go version
+allows, and the compiler and vet's `stdversion` check already reject
+anything newer than the `go` directive. A version table would repeat the
+toolchain and go stale every six months. CI runs both on the example,
+because Claude copies the example.
+
+**`go fix` runs on the touched packages only.** A repo-wide `-diff`
+check fails on any old code anywhere, and "fix findings, never silence"
+would then push the agent to modernize files nobody asked it to touch.
+
+**`errors.AsType` for single checks, `errors.As` in switches.** A
+`switch` case can't declare a variable, so a mapping like `fail()` reads
+worse with `AsType`, and the modernizer only rewrites the `if` form.
+
+**Code-level concurrency and testing rules live in the references.**
+They came from a review of a broader "go-development" draft and cover
+what goes wrong inside services: unbounded fan-out, goroutines parked
+on a receive, locks held across I/O, sleeps in tests. They load with
+the references that already cover concurrency and tests instead of
+adding a second skill that triggers on every Go task.
+
 **Human docs stay out of the skill folder.** Everything in it is
 installed with the skill, and the agent could follow a loose summary
 instead of the exact rules. `scripts/check_skills.py` enforces this.
@@ -110,6 +136,10 @@ instead of the exact rules. `scripts/check_skills.py` enforces this.
 | `pkg/` in applications | Signals "importable by outsiders" when nothing is. |
 | A separate template repo as the source of truth | Claude usually can't reach it, and two copies drift. The example lives in the skill and CI tests it. |
 | A human guide inside the skill folder | Ships with the skill and competes with SKILL.md. |
+| A Go version-feature table | Repeats what the compiler, vet and `go fix` already enforce, and goes stale with each release. |
+| DDD subpackages per domain (`ordering/app`, `ordering/postgres`, `ordering/httpapi`) | A layer split inside a domain; breaks the `http*.go`/`store*.go` lint rule and the no-nesting test. Aggregate rules fit in `<domain>.go`. |
+| A broad "go-development" sibling skill for any `.go` task | Fires alongside this skill on every structural task, repeats about half of it and contradicts it on interfaces, layout, DI containers and skipped database tests. |
+| Compiled `errgroup` examples in the golden example | Would add the example's first dependency (a `go.sum`, downloads in CI and sandboxes). `errgroup` stays in prose. |
 
 ## Maintenance runbook
 
@@ -120,6 +150,8 @@ newest stable Go and the newest golangci-lint.
   code, exclude it in `.golangci.yml` with a comment saying why. Then
   bump the pinned golangci-lint version in
   `.github/workflows/go-architecture.yml`.
+- A `go fix` finding (a new Go release added a modernizer): run
+  `go fix ./...` in the example, review the diff, commit it.
 
 **A new Go release comes out.** Go supports the two newest releases.
 Move the example's `go.mod` to the older of the two, push, and check
@@ -145,3 +177,11 @@ together, update the reason here, and walk the prompts in
   copies must change it. The architecture tests read it from `go.mod`.
 - The architecture tests are tripwires based on names and syntax, not
   proofs; code review covers the rest.
+- Function-level Go is out of scope: the description excludes fixes
+  inside one function, so a prompt like "fix the leak in this worker
+  pool" or "make this hot loop faster" doesn't load the concurrency
+  rules. A separate code-level skill gets built only if a baseline run
+  shows the gap: about 8 such prompts, 3 runs each with and without a
+  draft skill, graded by `go vet`, `-race` and an empty `go fix -diff`.
+  Build it if the baseline fails 2 of 3 runs on 2 or more prompts and
+  the draft fixes them.

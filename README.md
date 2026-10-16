@@ -45,7 +45,8 @@ cd skills/skills && zip -r go-architecture.zip go-architecture
 Every push and pull request runs `scripts/check_skills.py`, which checks
 each skill's structure and frontmatter. Skills with runnable examples
 are also checked in CI on every change (see `.github/workflows/`). For `go-architecture` that means `gofmt`,
-`go vet` and `go test -race` (including the architecture tests) on both
+`go vet`, `go fix -diff` (no outdated idioms) and `go test -race`
+(including the architecture tests) on both
 the oldest Go version in `go.mod` and the current stable release, plus
 `golangci-lint` with the example's own config, all at zero issues.
 Workflow actions are pinned to commit SHAs and kept current by

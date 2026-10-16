@@ -39,7 +39,10 @@ little, while speculative structure is paid for on every change.
 5. **Write tests** per `references/testing.md`.
 6. **Verify before saying it's done:** `gofmt`, `go vet ./...`,
    `golangci-lint run` (if the repo has a config) and `go test -race` on
-   the touched packages plus the architecture tests. Fix findings in the
+   the touched packages plus the architecture tests. On Go 1.26+, also
+   run `go fix -diff` on the touched packages: apply its fixes to code
+   you wrote and mention, not rewrite, findings in code you didn't. Run
+   `go mod tidy` when imports changed. Fix findings in the
    code; never silence a linter or skip a test to get green. If a check
    can't run here (no Docker for database tests, no network, no
    golangci-lint), name each check that didn't run and why, call the

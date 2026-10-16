@@ -55,6 +55,17 @@ waiting for.
   hand-rolled teardown.
 - `t.Parallel()` in tests and subtests that share no state, which with
   per-test fixtures is almost all of them.
+- Time-dependent concurrent code (timeouts, tickers, retries with
+  backoff, a worker that runs every second) is tested inside
+  `synctest.Test`, where the fake clock advances as soon as every
+  goroutine in the bubble is blocked. Never `time.Sleep` to wait for a
+  goroutine.
+- Code that parses untrusted input (decoders, ID or money parsers) gets
+  a fuzz target with a seed corpus. Assert properties that must always
+  hold (no panic, round-trip, invariants), not exact outputs.
+- Large or structured expected output (rendered templates, generated
+  documents, long JSON) lives in `testdata/<name>.golden` behind an
+  `-update` flag that rewrites it; the diff is reviewed in the PR.
 
 ## Integration tests and CI
 
