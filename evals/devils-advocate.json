@@ -336,6 +336,21 @@
       "query": "Headless run: the plan is a backfill and then dropping the old users table; the backfill is about to start.",
       "should_trigger": true,
       "target": "devils-advocate skill and advocatus-diaboli agent"
+    },
+    {
+      "query": "What edge cases does this implementation plan miss?",
+      "should_trigger": false,
+      "target": "devils-advocate skill and advocatus-diaboli agent (qa covers this)"
+    },
+    {
+      "query": "Find the bugs in this diff before I merge it.",
+      "should_trigger": false,
+      "target": "devils-advocate skill and advocatus-diaboli agent (qa covers this)"
+    },
+    {
+      "query": "Does the rate limiter code actually match RFC 17?",
+      "should_trigger": false,
+      "target": "devils-advocate skill and advocatus-diaboli agent (qa covers this)"
     }
   ]
 }
