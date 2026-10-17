@@ -65,8 +65,10 @@ and on real pull requests the best LLM review setups had low precision,
 with missing context the largest source of false positives. In the
 debiasing studies a single contradicting reason improved calibration,
 and one study (author attribution uncertain) found that asking for ten
-counterfactuals increased hindsight bias where asking for two did not. The filter, the cap and the 20-file
-read budget aim at fewer, truer findings.
+counterfactuals increased hindsight bias where asking for two did not.
+The filter, the cap and the read budget in
+[the agent's Work steps](../agents/advocatus-diaboli.md#work-internal-do-not-show)
+aim at fewer, truer findings.
 
 **Attack load-bearing assumptions, not details.** Intelligence doctrine
 starts devil's advocacy by stating the mainline judgment and its
@@ -84,11 +86,11 @@ that only argues against is structurally a consultant. The steelman
 puts the other side in front of the reader.
 
 **Calm, objective tone and calibrated disagreement, no contrarian
-persona.** Objective devil's advocacy outperformed "carping" advocacy,
-which produced the fewest alternatives and the lowest quality. In
-multi-agent debate, moderate disagreement beat being told to disagree
-with everything. Red-teaming handbooks warn against an over-adversarial
-tone.
+persona.** In one research programme, objective devil's advocacy
+outperformed "carping" advocacy, which in face-to-face groups produced
+the fewest alternatives and the lowest quality. In multi-agent debate,
+moderate disagreement beat being told to disagree with everything. The
+UK MOD red-teaming handbook warns against an over-adversarial tone.
 
 **Each objection says LIKELY or POSSIBLE.** People discount dissent they
 know is assigned and can end up more attached to their original view.
@@ -173,11 +175,16 @@ planted file can't grant anything.
 `advocatus-diaboli`, the office's Latin name, so that "delegate to the
 devil's advocate" can't resolve to the skill invoking itself.
 
-**Invoked selectively.** Devil's advocacy helped on hard, ill-structured
-problems and did nothing or slowed things down on easy or additive ones.
+**Invoked selectively.** Devil's advocacy helped on difficult tasks and
+on tasks with one correct answer, slowed additive tasks, and did nothing
+for conjunctive ones.
 The US intelligence community found that not every product suits it.
 Model invocation is limited to costly or hard-to-reverse steps to keep
-Opus calls rare and the advocate worth listening to.
+Opus calls rare and the advocate worth listening to. The review comes
+before the first step that changes shared state, as
+[When to run](../skills/devils-advocate/SKILL.md#when-to-run) says,
+because a review that arrives after the backfill can no longer leave
+things as they were.
 
 ## Rejected approaches
 
@@ -192,8 +199,8 @@ Opus calls rare and the advocate worth listening to.
 - A separate premortem mode: one more choice for little gain; the
   premortem lives inside the attack step.
 - Validating every objection with a second subagent or merging several
-  critics: it improves recall and precision on code review, but doubles
-  Opus cost on a skill already reserved for costly decisions. Revisit
+  critics: aggregating several review runs raised F1 on a code-review
+  benchmark, but it multiplies Opus cost on a skill already reserved for costly decisions. Revisit
   if logged results show many false BLOCKING objections; the cheaper
   read-only Check run by the main agent covers the most important ones.
 - Naming the agent `devils-advocate` like the skill: see above.
