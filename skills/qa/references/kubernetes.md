@@ -29,7 +29,7 @@ Never run anything against a cluster: no `kubectl` commands (including `--dry-ru
 - A liveness probe that checks dependencies (database, other services): when a dependency slows, every pod restarts at once.
 - No readiness probe, so traffic arrives before the app is ready; or readiness that doesn't reflect real readiness.
 - A slow-starting app with a liveness probe but no `startupProbe`, killed before it finishes starting.
-- Shell-form `CMD` or `ENTRYPOINT` (`CMD node server.js`) makes `/bin/sh` PID 1, which doesn't forward `SIGTERM`; the app is killed after the grace period instead of shutting down cleanly.
+- Shell-form `CMD` or `ENTRYPOINT` (`CMD node server.js`) can make `/bin/sh` PID 1, which doesn't forward `SIGTERM`, so the app is killed after the grace period instead of shutting down cleanly. Some shells `exec` a single command and avoid this; check the image's shell, or use the exec form.
 - `terminationGracePeriodSeconds` (default 30) shorter than the app's drain time; no `preStop` delay, so the pod stops before endpoints stop routing to it.
 
 ## Resources and scaling

@@ -12,12 +12,12 @@ Contents
 
 | Command | Class | Notes |
 |---|---|---|
-| `ruff check .` | S if Ruff is installed outside the repository | Ruff loads no plugins. |
-| `pyright` | S if installed outside the repository | |
+| `ruff check --no-fix .` | S if Ruff is installed outside the repository | Ruff loads no plugins; `--no-fix` overrides a `fix = true` in its config, which would rewrite files. |
+| `pyright` | S if installed outside the repository through npm or as a standalone binary | The PyPI `pyright` wrapper downloads Node.js packages on first run, which makes it N. |
 | `mypy .` | S only if the config names no `plugins` and mypy is installed outside the repository; otherwise E | Plugins import code; the Django plugin imports the project's settings. |
 | `pytest`, `tox`, `nox`, `python -m ...` | E | `conftest.py`, `setup.py` and test code run. |
 | `pip-audit` | E and N | Downloads the vulnerability database, and may install packages to resolve requirements. |
-| `pip install`, `ruff check --fix`, `black` | Never | They install or write files. |
+| `pip install`, `ruff check` without `--no-fix`, `black` | Never | They install or write files. |
 
 ## Language pitfalls
 

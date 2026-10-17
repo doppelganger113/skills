@@ -21,9 +21,8 @@ qa finds what will break in a plan or in code before it ships:
 defects, unhandled edge cases and failure modes, each with a concrete
 trigger. devils-advocate decides whether a proposal should be committed
 to at all and argues the strongest case against it. The two overlap on
-plans, so each description excludes the other's job (the
-devils-advocate description now points plan edge cases and code bug
-hunts to qa): "will this
+plans, so each description, and the advocatus-diaboli agent's, excludes the
+other's job: "will this
 implementation work under failure, concurrency and real data?" is qa;
 "should we do this, and is there a better option?" is devils-advocate.
 The trigger evals test that boundary in both directions.
@@ -123,7 +122,7 @@ it.
 
 **Caps, no style, and CLEAR as a normal result.** A reviewer asked to
 find problems finds some, and a flood of minor ones teaches people to
-ignore the output. Six findings, four leads and a ban on style and
+ignore the output. Small caps on findings and leads and a ban on style and
 generic advice keep the review readable; linters own style. The
 false-positive rate is the metric that decides whether the skill
 stays.

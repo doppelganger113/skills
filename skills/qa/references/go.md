@@ -17,7 +17,7 @@ Run every Go command with `GOTOOLCHAIN=local GOPROXY=off GOFLAGS=-mod=readonly`,
 |---|---|---|
 | `go vet ./...` | S | Compiles packages without running them; cgo packages run the C compiler on the repository's C code, with Go's allowlist of compiler flags. |
 | `staticcheck ./...` | S | If installed. |
-| `golangci-lint run ./...` | S | Only if the repository's `.golangci.*` config loads no plugins (no `custom` linters or module plugins) and the binary is not inside the repository; otherwise E. |
+| `golangci-lint run ./...` | S | Only if the repository's `.golangci.*` config loads no plugins (no `custom` linters or module plugins), enables no fixing (no `fix` option set to true anywhere in it), and the binary is not inside the repository. With plugins it is E; with fixing enabled it is Never, because it would rewrite files. |
 | `go test -race -count=1 ./...` | E | Runs the repository's tests and `TestMain`. |
 | `govulncheck ./...` | N | Downloads the vulnerability database. |
 | `go generate`, `go mod tidy`, `go get`, `gofmt -w`, `go fix` without `-diff` | Never | They write files or download. |

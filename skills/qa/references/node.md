@@ -44,7 +44,7 @@ Most JavaScript tooling runs from `node_modules` and loads configuration written
 
 - Synchronous work in a request path (`fs.*Sync`, `crypto.*Sync`, large `JSON.parse`, CPU-heavy loops) blocks every other request.
 - Regular expressions with nested quantifiers on user input (catastrophic backtracking).
-- `fetch` has no default timeout; pass `AbortSignal.timeout(...)`.
+- `fetch` has no timeout suited to the caller (Node's built-in defaults are minutes long); pass `AbortSignal.timeout(...)`.
 - Module-level caches or maps that only grow; event listeners added per request and never removed.
 - Database or HTTP clients created per request instead of once, exhausting connections or sockets.
 

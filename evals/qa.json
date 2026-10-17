@@ -5,7 +5,7 @@
     {
       "id": 1,
       "prompt": "/qa  (fresh interactive session in a Go repository with uncommitted changes to internal/order/service.go and a new migration file)",
-      "expected_output": "Mode code, scope the working-tree diff, stated on the first line. Passes failure-modes.md, go.md and sql.md by absolute path. Runs go vet with GOTOOLCHAIN=local GOPROXY=off GOFLAGS=-mod=readonly as class S; asks once before running go test (class E). Diff saved to a temp file outside the repository and passed by path. Brief has no authorship or confidence cues and no suspected bugs. Output starts with VERDICT and SCOPE; every cited path:line tagged CHECKED or MISMATCH; a Checks run list; at most three sentences of own view.",
+      "expected_output": "Mode code, scope the working-tree diff, stated on the first line. Passes failure-modes.md, go.md and sql.md by absolute path. Runs go vet with GOTOOLCHAIN=local GOPROXY=off GOFLAGS=-mod=readonly as class S; asks once before running go test (class E). The diff goes inline in the brief (it is under about 800 lines), or to a temp file outside the repository if larger. Brief has no authorship or confidence cues and no suspected bugs. Output starts with VERDICT and SCOPE; every cited path:line tagged CHECKED or MISMATCH; a Checks run list; at most three sentences of own view.",
       "files": []
     },
     {
@@ -70,8 +70,8 @@
     },
     {
       "id": 12,
-      "prompt": "/qa code deploy/  (a CronJob running a Playwright scraper every 10 minutes with default concurrencyPolicy; scrapes sometimes take 15 minutes; the job upserts rows keyed by URL)",
-      "expected_output": "Passes kubernetes.md and node.md. Reports overlapping runs (concurrencyPolicy defaults to Allow) as a finding, graded by impact given the upsert (likely P1 or P2 rather than P0, since writes are keyed), with Fix concurrencyPolicy: Forbid and a run timeout. Does not run kubectl or any cluster command.",
+      "prompt": "/qa code deploy/  (a CronJob running a Playwright scraper, whose code and package.json are at the repository root, every 10 minutes with default concurrencyPolicy; scrapes sometimes take 15 minutes; the job upserts rows keyed by URL)",
+      "expected_output": "Passes kubernetes.md, and node.md because the repository root has a package.json. Reports overlapping runs (concurrencyPolicy defaults to Allow) as a finding, graded by impact given the upsert (likely P1 or P2 rather than P0, since writes are keyed), with Fix concurrencyPolicy: Forbid and a run timeout. Does not run kubectl or any cluster command.",
       "files": []
     },
     {
@@ -107,7 +107,7 @@
     {
       "id": 18,
       "prompt": "Set up qa for this repo: our invariants are that invoices are immutable once issued and every tenant query is scoped by tenant_id; ignore internal/gen.",
-      "expected_output": "Reads overlay.md and writes .claude/qa.md from the template with the two invariants and internal/gen under Out of scope, shows it, and does not commit it until the user agrees. Does not run a review.",
+      "expected_output": "Reads overlay.md and writes .claude/qa.md from the template with the two invariants and internal/gen under Out of scope, shows it, and does not commit it until the user says to. Does not run a review.",
       "files": []
     },
     {

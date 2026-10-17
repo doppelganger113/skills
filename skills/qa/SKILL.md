@@ -22,6 +22,9 @@ If no `qa-reviewer` subagent is available:
 - Attended: say it must be installed into `.claude/agents/` or `~/.claude/agents/`, and offer an inline review labelled `SAME-CONTEXT: weaker, shares the author's blind spots`. Run it only if the user accepts: follow steps 1 to 3, read the references yourself, apply the Work steps and Output format in `agents/qa-reviewer.md` if you can read it (otherwise VERDICT / BOTTOM LINE / up to 6 findings with Where, Trigger, Impact, Check, Fix / COVERAGE), then steps 6 to 8.
 - Unattended: run step 3, report that the review did not complete, and apply the unattended hold in step 8.
 
+## Setting up qa for a repository
+When the user asks to tailor or set up qa for a repository, rather than to run a review: read `references/overlay.md`, write `.claude/qa.md` from its template using what the conversation and the repository say, show it, and commit it only when the user says to. Run no review unless they also ask for one. Unattended, write the file only if the run's own prompt asked for it, and don't commit it.
+
 ## Steps
 1. **Mode and scope.**
    - The mode is the first argument if it is `plan`, `code` or `conformance`. Otherwise infer it: a plan, spec, RFC or design with no implementation to check is `plan`; code, a diff, a PR, paths or the repository is `code`; a plan and its implementation, where the question is whether the code does what the plan says, is `conformance`. A plan file stored in a repository is still `plan`; the reviewer may read the code to test the plan's assumptions.
@@ -30,7 +33,7 @@ If no `qa-reviewer` subagent is available:
    - Intended behaviour: what the plan or code is meant to do, from the user, the PR or issue text in the conversation, tests, docs or names. If it is unknown and the scope is more than a few files, ask once (attended); unattended, infer it and mark it `ASSUMED`. Without it the reviewer can find crashes, races and data loss, but not logic that does the wrong thing correctly.
    - Show the mode and scope in the first line of what you show the user.
 2. **Context.**
-   - Detect the ecosystems in scope by their marker files (for `plan`, by what the plan names) and pick the references to pass: `go.mod` → `go.md`; `package.json` or `tsconfig.json` → `node.md`; `pyproject.toml`, `setup.py`, `setup.cfg`, `requirements*.txt` or `Pipfile` → `python.md`; SQL migrations, migration-tool config or ORM migrations, or a plan that changes a schema → `sql.md`; Kubernetes manifests, `Chart.yaml`, `kustomization.yaml`, `Dockerfile` or compose files → `kubernetes.md`. Always pass `failure-modes.md`. Note any ecosystem in scope that has no reference.
+   - Detect the ecosystems by their marker files in scope and at the repository root (for `plan`, by what the plan names) and pick the references to pass: `go.mod` → `go.md`; `package.json` or `tsconfig.json` → `node.md`; `pyproject.toml`, `setup.py`, `setup.cfg`, `requirements*.txt` or `Pipfile` → `python.md`; SQL migrations, migration-tool config or ORM migrations, or a plan that changes a schema → `sql.md`; Kubernetes manifests, `Chart.yaml`, `kustomization.yaml`, `Dockerfile` or compose files → `kubernetes.md`. Always pass `failure-modes.md`. Note any ecosystem in scope that has no reference.
    - If the repository has `.claude/qa.md`, read `references/overlay.md` and apply only what it allows.
 3. **Static checks** (`code` and `conformance` only). Read `references/tooling.md` and follow it: which commands may be found, how each is classed, when each class may run, and how results are recorded. Never install, download, fix or format anything.
 4. **Brief.** Write it in neutral third person. Never say who wrote the work, how confident anyone is in it, how much effort it took, or that anyone likes it, and never pass your own suspected bugs or weak spots; these cues make reviewers agree and anchor. Include:
@@ -62,4 +65,4 @@ All in this skill's `references/` folder. Pass the review references to the revi
 - `failure-modes.md`: the stack-independent failure-mode checklist. Always passed.
 - `go.md`, `node.md`, `python.md`, `sql.md`, `kubernetes.md`: per-ecosystem bug patterns and static-check commands. Passed per step 2; their commands are used in step 3.
 - `tooling.md`: finding, classing and running static checks. Read in step 3.
-- `overlay.md`: what `.claude/qa.md` may change, and a template. Read in step 2 when the file exists, or when the user asks to tailor qa for a repository; then write `.claude/qa.md` from the template and show it before committing it.
+- `overlay.md`: what `.claude/qa.md` may change, and a template. Read in step 2 when the file exists, or when the user asks to set up qa for a repository (see Setting up qa for a repository).
