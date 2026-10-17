@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Repository checks for the skills in skills/.
+"""Repository checks for the skills in skills/ and the agents in agents/.
 
 Run from the repository root: python3 scripts/check_skills.py
 Standard library only, so it runs on any CI runner without installs.
@@ -15,6 +15,12 @@ Checks, per skill folder:
     installed with the skill and may be read by the agent, so human
     docs belong in docs/ instead.
   - The root README.md lists the skill.
+
+Checks, per agent file in agents/:
+  - Frontmatter with `name` (kebab-case, matching the file name),
+    a non-empty `description` and an explicit `tools` line, so no agent
+    silently inherits every tool.
+  - The root README.md lists the agent.
 """
 
 import pathlib
@@ -23,6 +29,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "skills"
+AGENTS = ROOT / "agents"
 # Doc-like extensions only, so source files such as guide.go aren't flagged.
 HUMAN_DOC = re.compile(
     r"^(readme|guide|changelog|contributing)(\.(md|markdown|txt|rst|adoc|org|html?))?$",
@@ -106,18 +113,45 @@ def check_skill(folder, readme_text):
     return errors
 
 
+def check_agent(path, readme_text):
+    errors = []
+    rel = path.relative_to(ROOT)
+    fm = frontmatter(path.read_text(encoding="utf-8"))
+    if fm is None:
+        return [f"{rel}: missing or unterminated frontmatter"]
+    for key in fm["__unsafe__"]:
+        errors.append(
+            f"{rel}: {key} is not valid as an unquoted YAML value; "
+            f"quote it or use a block scalar (>)"
+        )
+    name = fm.get("name", "")
+    if not NAME.match(name) or len(name) > 64:
+        errors.append(f"{rel}: name {name!r} must be kebab-case, at most 64 characters")
+    if name != path.stem:
+        errors.append(f"{rel}: name {name!r} must match file name {path.stem!r}")
+    if not fm.get("description"):
+        errors.append(f"{rel}: description is empty")
+    if not fm.get("tools"):
+        errors.append(f"{rel}: list the agent's tools explicitly (least privilege)")
+    if f"agents/{path.name}" not in readme_text:
+        errors.append(f"README.md: add {path.stem} to the agents table")
+    return errors
+
+
 def main():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     folders = sorted(p for p in SKILLS.iterdir() if p.is_dir())
     if not folders:
         print("no skills found under skills/", file=sys.stderr)
         return 1
+    agents = sorted(AGENTS.glob("*.md")) if AGENTS.is_dir() else []
     errors = [e for f in folders for e in check_skill(f, readme)]
+    errors += [e for a in agents for e in check_agent(a, readme)]
     for e in errors:
         print(f"error: {e}", file=sys.stderr)
     if errors:
         return 1
-    print(f"ok: {len(folders)} skill(s) checked")
+    print(f"ok: {len(folders)} skill(s) and {len(agents)} agent(s) checked")
     return 0
 
 
