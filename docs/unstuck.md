@@ -91,8 +91,12 @@ feasibility suffers because layout, commands and version floors live in
 CLAUDE.md. The real wall was that loaded rules read as binding, so the
 agent now sorts them itself: hard rules bind, conventions are
 assumptions it may question openly, and anything unclear counts as hard
-so a wrong call fails safe. Personal and workflow instructions are set
-aside because they compete with the output format the caller parses.
+so a wrong call fails safe. Tone, formatting and reporting instructions
+are set aside because they compete with the output format the caller
+parses; commands, layout and security instructions stay because the
+agent needs them to ground ideas and stay safe. Rules files the agent
+opens itself can only add restrictions, so a planted "rule" can't grant
+anything.
 
 **Non-technical options compete on the same gates.** Changing the
 requirement or accepting a constraint often resolves stuck problems, but
