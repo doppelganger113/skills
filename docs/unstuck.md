@@ -79,6 +79,21 @@ vague brief doesn't turn into a repository sweep.
 **Opus.** Smaller models collapse towards the obvious answer, which
 defeats the purpose. The agent is called rarely and returns little.
 
+**Project instructions stay loaded; conventions become questionable.**
+Claude Code can start the agent without CLAUDE.md (`omitClaudeMd`),
+which looked like the way to free it from the session's walls. Three
+reviewers rejected that. Conventions such as "no interfaces until a
+second consumer" exist to counter the model's own defaults, so without
+them the agent proposes habits, not lateral ideas. The exclusion is also
+partial (path-scoped and managed rules still load, older versions ignore
+the key), the direct-call path would run with no rules at all, and
+feasibility suffers because layout, commands and version floors live in
+CLAUDE.md. The real wall was that loaded rules read as binding, so the
+agent now sorts them itself: hard rules bind, conventions are
+assumptions it may question openly, and anything unclear counts as hard
+so a wrong call fails safe. Personal and workflow instructions are set
+aside because they compete with the output format the caller parses.
+
 **Non-technical options compete on the same gates.** Changing the
 requirement or accepting a constraint often resolves stuck problems, but
 a mandatory slot invited token "ask the stakeholder" filler.
@@ -90,6 +105,11 @@ a mandatory slot invited token "ask the stakeholder" filler.
 - Asking "would the main agent have proposed this?": not judgeable.
 - Excluding bugs whose cause isn't isolated: allowed instead, but only
   for diagnostic ideas (bisect, minimal repro, other observability).
+- Starting the agent without CLAUDE.md (`omitClaudeMd`) and having the
+  caller tag the rules in the brief: a conservative caller re-imports
+  the same walls, and a wrong or missing tag fails open. Worth
+  revisiting only if an A/B run on the evals shows more useful
+  convention-breaking candidates with no extra hard-rule violations.
 - Converting the agent into a `context: fork` skill: the brief must be
   written in the main conversation first, and an agent file states its
   tool allowlist and model directly.

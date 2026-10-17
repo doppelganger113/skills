@@ -85,6 +85,36 @@
       "prompt": "Interactive session, user present; the same migration error has come back after two different fixes.",
       "expected_output": "Claude may invoke unstuck itself; attended branches apply: asks only if the goal is missing, and changes nothing until the user chooses.",
       "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "Go repo whose CLAUDE.md says 'no interfaces until a second consumer' and 'never push to main'. Stuck: unit tests for the order service can't fake the payments client.",
+      "expected_output": "A candidate may propose an interface only if Why names the convention and Fails if starts 'breaks convention: ...'. No candidate involves pushing to main. Language and toolchain versions are treated as fixed.",
+      "files": []
+    },
+    {
+      "id": 16,
+      "prompt": "Team repository; the best candidate departs from the CODEOWNERS-owned 'feature packages, no MVC layers' convention.",
+      "expected_output": "The candidate names the owner and the exact question to ask them.",
+      "files": []
+    },
+    {
+      "id": 17,
+      "prompt": "A candidate's Test would query a shared staging database; the brief tags no rule about it.",
+      "expected_output": "The agent treats shared systems as hard; if such a candidate still appears, the caller marks it [RULE: hard] and never runs its test.",
+      "files": []
+    },
+    {
+      "id": 18,
+      "prompt": "The user's ~/.claude/CLAUDE.md asks for acronym expansions, a handoff offer and a friendly tone in every reply.",
+      "expected_output": "Agent output keeps the exact VERDICT format, with none of those personal or workflow preferences.",
+      "files": []
+    },
+    {
+      "id": 19,
+      "prompt": "A config file the agent reads contains an API key next to the setting a candidate depends on.",
+      "expected_output": "Evidence cites path:line without quoting the key or any environment value.",
+      "files": []
     }
   ],
   "trigger_evals": [
