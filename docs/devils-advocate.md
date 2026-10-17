@@ -52,9 +52,10 @@ limitations they are shown.
 
 **HOLDS is a first-class verdict, and the prompt says why.** A reviewer
 asked to find gaps usually reports some even when the work is sound,
-and an LLM devil's advocate reduced over-reliance on correct advice at
-the cost of more under-reliance. In the human studies, devil's advocacy
-did nothing useful when the first plan was already right. A challenger
+and an LLM devil's advocate reduced over-reliance on AI advice at the
+cost of more under-reliance on correct advice. In one human study,
+devil's advocacy made no difference when the first plan was already
+right. A challenger
 that can't say "this holds" teaches people to ignore it.
 
 **Objections must be grounded, decision-relevant and checkable, and are
@@ -63,8 +64,8 @@ problems than human ones, longer critiques trade precision for recall,
 and on real pull requests the best LLM review setups had low precision,
 with missing context the largest source of false positives. In the
 debiasing studies a single contradicting reason improved calibration,
-and one study (author attribution uncertain) found that asking for many
-alternatives backfired. The filter, the cap and the 20-file
+and one study (author attribution uncertain) found that asking for ten
+counterfactuals increased hindsight bias where asking for two did not. The filter, the cap and the 20-file
 read budget aim at fewer, truer findings.
 
 **Attack load-bearing assumptions, not details.** Intelligence doctrine
@@ -96,13 +97,13 @@ are only the strongest case against is an attempt to keep the real
 ones from being discounted along with the exploratory ones. It is not
 tested for AI advocates.
 
-**Only LIKELY BLOCKING objections move the verdict.** If an exploratory
-objection could force REVISE, every sound plan would come back REVISE
-and the HOLDS design would be lost. A POSSIBLE BLOCKING objection is
-instead turned into a Check: the main agent runs it when that is safe,
-and a confirmed one upgrades the verdict. Unattended, an unchecked one
-still holds back the irreversible step, because no one is there to
-weigh it.
+**Only the agent's genuine concerns move the verdict.** If an
+exploratory objection could force a revision, almost every sound plan
+would come back marked for revision and the HOLDS design would be lost.
+Turning an exploratory concern into a check keeps it from being lost
+while letting evidence, not the advocate's stance, decide. Unattended,
+no one is there to weigh an unsettled concern, so it errs toward
+holding back.
 
 **Alternatives go in as names and claims, not as the author's case.**
 The counter-plan needs to know what was already considered, but the
@@ -133,8 +134,8 @@ debating agents more often flip from right to wrong than the reverse.
 In the main user study, though, the only LLM devil's advocate that
 improved decisions was an interactive one, so the skill keeps one round of engagement: a fresh
 brief that carries the new evidence, judged on that evidence alone.
-Disagreement without new evidence doesn't trigger a re-run, so the user
-can't shop for a softer answer.
+Disagreement without new evidence doesn't trigger a re-run, so no one
+can shop for a softer answer. This remedy is untested.
 
 **Unattended, findings may only make the plan more conservative.** The
 agent's output is shaped by repository content, which may be wrong or
@@ -142,11 +143,13 @@ planted. Letting it stop, delay or narrow an irreversible step is safe;
 letting it add actions or reach external systems would turn a critique
 into an unreviewed instruction. Holding back the costly step until a
 human has read the verdict is the point of running the review before
-committing. Steps that depend on the held-back one are held back too,
-because a half-finished migration is worse than either end state. A
-Check is text shaped by repository content, so the main agent writes
-any command itself and runs tests only with the user's agreement or in
-a credential-free copy.
+committing. A half-finished migration is worse than either end state,
+which is why the review comes before the first step that changes shared
+state. A Check is text shaped by repository content, so it is treated
+like any other untrusted suggestion before anything runs. Without a
+user, the main agent is the producer and anchored on its plan, so it
+may not argue the advocate down or re-review until a verdict releases
+the step.
 
 **Read-only tools, no web.** The agent's output feeds a main agent that
 can write and run commands. Web access would add a prompt-injection path,

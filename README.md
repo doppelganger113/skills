@@ -47,10 +47,11 @@ cp -R skills/skills/devils-advocate ~/.claude/skills/
 cp skills/agents/advocatus-diaboli.md ~/.claude/agents/
 ```
 
-For one repository, copy them into that repo's `.claude/skills/` and
-`.claude/agents/` instead. To update, run
-`rm -rf ~/.claude/skills/devils-advocate` first so the new copy doesn't
-land inside the old one.
+Skip the clone if you already have it from above. For one repository,
+copy them into that repo's `.claude/skills/` and `.claude/agents/`
+instead. To update, remove the old `devils-advocate` folder (in
+`~/.claude/skills/` or the repository's `.claude/skills/`) first, so the
+new copy doesn't land inside the old one.
 
 **Claude Code**, for all your projects:
 
