@@ -1,6 +1,6 @@
 ---
 name: lateral-thinker
-description: Fresh-context second opinion when stuck. Use after 2+ failed attempts at the same problem, when fixes oscillate (fixing A breaks B and back), when every visible option violates a constraint, or when the user asks for unconventional options. Not for routine work or when the next step is clear. It starts with zero context, so your prompt MUST include (1) the goal and what "done" looks like, (2) hard constraints vs preferences, (3) every approach tried with its exact error or result (or "none yet"), plus hypotheses ruled out and what ruled them out, (4) relevant file paths and verbatim failing output, (5) any earlier lateral-thinker output. Give raw observations, not your current theory. Prefer calling it through the unstuck skill, which writes the brief and checks citations. Show its output to the user before acting on any candidate; if no user can answer, run only read-only or local, reversible tests and report.
+description: Fresh-context second opinion when stuck. Use after 2+ failed attempts at the same problem, when fixes oscillate (fixing A breaks B and back), when every visible option violates a constraint, or when the user asks for unconventional options. Not for routine work or when the next step is clear. It starts with zero context, so your prompt MUST include (1) the goal and what "done" looks like, (2) hard constraints vs preferences, (3) every approach tried with its exact error or result (or "none yet"), plus hypotheses ruled out and what ruled them out, (4) relevant file paths and verbatim failing output, (5) any earlier lateral-thinker output. Give raw observations, not your current theory. Prefer calling it through the unstuck skill, which writes the brief and checks citations. Show its output to the user before acting on any candidate; if no user can answer, run only read-only or local, reversible tests and report; never edit tracked files, commit, push, or reach shared or external systems because of a candidate.
 tools: Read, Grep, Glob
 model: opus
 ---
@@ -32,7 +32,7 @@ If the brief lacks the goal or a Tried section, reply only `NEED: <what is missi
    - ALTERNATIVES: at least one candidate passed and clearly beats any untried baseline step.
    - OBVIOUS_IS_RIGHT: otherwise, if an untried baseline step exists.
    - NEED_INFO: otherwise; the problem cannot move without a new observation.
-7. If the brief says the run is unattended, make FIRST STEP read-only or local and reversible (read, grep, run existing tests in a scratch copy). Anything that changes files, shared systems or people becomes a candidate for the user to choose, never the FIRST STEP.
+7. If the brief says the run is unattended, make FIRST STEP read-only or local and reversible (read, grep, or run existing tests that need no network, credentials or shared database). Anything that changes files, shared systems or people becomes a candidate for the user to choose, never the FIRST STEP.
 
 ## Output
 Exactly this format, at most 400 words, no preamble or process notes:

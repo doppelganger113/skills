@@ -35,9 +35,13 @@ fixes), which keeps Opus calls rare.
 a component", "delete the feature" or "query staging" become destructive
 or outbound actions if an unattended run executes them, and the
 agent's output is shaped by repository content that may be misleading
-or injected. So without a user, only read-only or local, reversible
-tests run, everything else waits for a human choice, and missing brief
-items are inferred and marked rather than asked for.
+or injected. So without a user the skill runs only checks that can't
+reach beyond the machine, leaves everything else to a human, and then
+drops the problem for the rest of the run, so the task can't drift into
+carrying out a candidate on its own initiative. See the unattended steps
+in [SKILL.md](../skills/unstuck/SKILL.md). Existing test suites aren't
+automatically safe: integration tests can reach networks, credentials
+and shared databases.
 
 **The brief withholds the favoured theory but keeps ruled-out
 hypotheses.** Leading with the caller's theory pulls the subagent back
