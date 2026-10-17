@@ -1,8 +1,9 @@
 # Working in this repository
 
-This repo publishes Claude agent skills. Each skill is a folder under
-`skills/` that gets installed as-is, so everything in it is written for
-the agent. Humans read the root `README.md` and `docs/`.
+This repo publishes Claude agent skills and the subagents some of them
+delegate to. Each skill is a folder under `skills/` and each subagent a
+file under `agents/`; both get installed as-is, so everything in them is
+written for the agent. Humans read the root `README.md` and `docs/`.
 
 ## Layout
 
@@ -11,6 +12,7 @@ skills/<name>/           the skill; installed and zipped as-is
   SKILL.md               frontmatter (name, description) + instructions
   references/*.md        detail the agent reads on demand
   examples/              runnable examples the agent copies from
+agents/<name>.md         a Claude Code subagent; installed as-is
 docs/<name>.md           why the skill says what it says (humans only)
 evals/<name>.json        test prompts with expected behaviour
 scripts/check_skills.py  structure checks, run in CI
@@ -27,6 +29,10 @@ scripts/check_skills.py  structure checks, run in CI
   contain "anthropic" or "claude". The
   description says what the skill does and when to use it, in at most
   1024 characters, with no angle brackets.
+- An agent's `name` matches its file name, and its `tools` line is always
+  explicit: least privilege, and no web tools when its output feeds an
+  agent that can write or run commands. A skill that delegates to an
+  agent says what to do when the agent isn't installed.
 - Keep SKILL.md under about 500 lines. Detail goes in `references/`,
   one level deep, each file over about 100 lines starting with a
   Contents list. SKILL.md says when to read each reference.
@@ -69,6 +75,16 @@ For changes to a skill's behaviour, also walk the prompts in
    test prompts.
 4. If it has a runnable example, `.github/workflows/<name>.yml` modelled
    on `go-architecture.yml`, with actions pinned to commit SHAs.
+
+## Adding an agent
+
+1. `agents/<name>.md` with frontmatter `name`, `description`, `tools`
+   and `model`.
+2. A row in the README's agents table, and install steps next to the
+   skill that uses it.
+3. Its reasoning and evals go in the `docs/` and `evals/` files of the
+   skill that delegates to it, or `docs/<name>.md` and
+   `evals/<name>.json` if it stands alone.
 
 ## Commits
 

@@ -4,15 +4,36 @@ Skills for AI coding agents following my way of doing things.
 
 Each skill is a folder under `skills/` with a `SKILL.md` that tells the
 agent when to use it and how, plus optional reference files and
-examples it reads on demand.
+examples it reads on demand. Some skills delegate to a Claude Code
+subagent, which lives as a single file under `agents/`.
 
 ## Skills
 
 | Skill | What it does |
 |---|---|
 | [go-architecture](skills/go-architecture/SKILL.md) ([design notes](docs/go-architecture.md)) | Architecture rules for Go code that stays clean as it grows from a small tool to a large multi-team codebase: structure in stages added only when a trigger fires, feature packages instead of MVC layers, enforced dependency boundaries, and a tested golden example with lint rules and architecture tests. |
+| [unstuck](skills/unstuck/SKILL.md) ([design notes](docs/unstuck.md)) | `/unstuck`: when a session is stuck, writes a complete brief (goal, constraints, what was tried and ruled out, evidence, secrets redacted), gets a second opinion from the `lateral-thinker` agent, checks every file and line it cites, and changes nothing until you pick a candidate. |
+
+## Agents
+
+| Agent | What it does |
+|---|---|
+| [lateral-thinker](agents/lateral-thinker.md) ([design notes](docs/unstuck.md)) | Read-only, fresh-context subagent that finds non-obvious approaches to a stuck problem: bans what was already tried, generates and filters ideas, and returns a verdict plus up to three candidates, each with cited evidence, cost, reversibility and a cheap falsifying test. Used by `unstuck`. |
 
 ## Install
+
+**unstuck** needs its agent too, and works in Claude Code only (the
+Claude apps have no subagents):
+
+```sh
+git clone https://github.com/doppelganger113/skills.git
+mkdir -p ~/.claude/skills ~/.claude/agents
+cp -R skills/skills/unstuck ~/.claude/skills/
+cp skills/agents/lateral-thinker.md ~/.claude/agents/
+```
+
+For one repository, copy them into that repo's `.claude/skills/` and
+`.claude/agents/` instead and commit both.
 
 **Claude Code**, for all your projects:
 
