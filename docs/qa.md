@@ -73,7 +73,9 @@ watching. A per-agent tool allowlist doesn't contain this: allowing
 invented, the class depends on what a command executes rather than its
 name, and anything that executes repository code or needs the network
 waits for the user, or for a run that declares a sandbox. A command
-counts as static only in the exact form a reference lists, because the
+counts as static only in the form
+[tooling.md](../skills/qa/references/tooling.md#command-classes)
+allows, because the
 same tool becomes code execution with one flag or environment variable
 (`go vet -vettool`, `GOFLAGS=-toolexec`, a lint config that loads
 plugins), and those are exactly what a hostile overlay or Makefile
