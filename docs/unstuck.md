@@ -16,14 +16,28 @@ advocate, context engineer, senior engineer) before the first commit.
 fresh context that hasn't converged on the main agent's path. A skill
 loads into the already-anchored conversation and inherits its framing.
 
-**A user-invoked skill writes the brief.** Models rarely judge themselves
-stuck; they retry variations, so automatic delegation seldom fires. The
-user usually notices first. The agent also sees only what the brief
-contains, and an ad-hoc brief is thin and leans towards the caller's own
-theory. The skill makes the brief complete every time.
-`disable-model-invocation` keeps the main agent from spending an Opus
-call on its own initiative through the skill; the agent's description
-still allows delegation when its triggers are visible.
+**A skill writes the brief, and it is the preferred entry point.** The
+agent sees only what the brief contains, and an ad-hoc brief is thin and
+leans towards the caller's own theory. The skill makes the brief
+complete every time, checks citations and caps delegations, so the
+agent's description points callers to it. Models rarely judge themselves
+stuck, so `/unstuck` is still the main way in during interactive work.
+
+**Claude may invoke the skill too, including unattended.** The first
+version was user-only (`disable-model-invocation`) and always ended at a
+"wait for the user" step, so long-running or scheduled tasks either
+couldn't use it or called the agent directly and lost the brief, the
+citation checks and the delegation cap. Model invocation is limited by
+the description to observable triggers (2+ failed attempts, oscillating
+fixes), which keeps Opus calls rare.
+
+**Unattended, it may look but not touch.** Candidates such as "subtract
+a component", "delete the feature" or "query staging" become destructive
+or outbound actions if an unattended run executes them, and the
+agent's output is shaped by repository content that may be misleading
+or injected. So without a user, only read-only or local, reversible
+tests run, everything else waits for a human choice, and missing brief
+items are inferred and marked rather than asked for.
 
 **The brief withholds the favoured theory but keeps ruled-out
 hypotheses.** Leading with the caller's theory pulls the subagent back
@@ -78,9 +92,13 @@ a mandatory slot invited token "ask the stakeholder" filler.
 
 ## Known limits
 
-- Claude Code only: claude.ai rejects `disable-model-invocation` and
-  `argument-hint` on upload, and has no subagents.
+- Claude Code only: claude.ai rejects `argument-hint` on upload, and has
+  no subagents.
 - "Internal, do not show" depends on the model complying.
+- Unattended mode depends on the model recognising that no user can
+  answer and on it classifying a test as read-only. Permission settings
+  for the unattended run (no push, no write outside a scratch copy) are
+  the real enforcement; the skill is a second layer.
 - No eval results yet. The bar for keeping the pair: on 8 to 10 past
   stuck problems with known fixes, it beats the main agent alone on at
   least 3, with no fabricated citations.

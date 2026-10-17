@@ -12,7 +12,7 @@ subagent, which lives as a single file under `agents/`.
 | Skill | What it does |
 |---|---|
 | [go-architecture](skills/go-architecture/SKILL.md) ([design notes](docs/go-architecture.md)) | Architecture rules for Go code that stays clean as it grows from a small tool to a large multi-team codebase: structure in stages added only when a trigger fires, feature packages instead of MVC layers, enforced dependency boundaries, and a tested golden example with lint rules and architecture tests. |
-| [unstuck](skills/unstuck/SKILL.md) ([design notes](docs/unstuck.md)) | `/unstuck`: when a session is stuck, writes a complete brief (goal, constraints, what was tried and ruled out, evidence, secrets redacted), gets a second opinion from the `lateral-thinker` agent, checks every file and line it cites, and changes nothing until you pick a candidate. |
+| [unstuck](skills/unstuck/SKILL.md) ([design notes](docs/unstuck.md)) | `/unstuck`: when a session is stuck, writes a complete brief (goal, constraints, what was tried and ruled out, evidence, secrets redacted), gets a second opinion from the `lateral-thinker` agent, checks every file and line it cites, and changes nothing until you pick a candidate. Claude can also invoke it after repeated failures, including in unattended runs, where it asks nothing and only runs read-only checks. |
 
 ## Agents
 
