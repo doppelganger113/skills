@@ -37,7 +37,7 @@ shares the proposer's stake in a positive outcome stops challenging.
 **The critique happens in a subagent, not in the main session.** Models
 rarely find their own errors and prefer their own outputs, and
 self-refinement amplifies that. A fresh context that never saw the
-deliberation is the strongest-supported design choice in the whole
+deliberation is among the best-supported design choices in the
 evidence base.
 
 **The skill writes a neutral, de-owned brief.** Critique from LLMs turns
@@ -141,17 +141,17 @@ can shop for a softer answer. This remedy is untested.
 
 **Unattended, findings may only make the plan more conservative.** The
 agent's output is shaped by repository content, which may be wrong or
-planted. Letting it stop, delay or narrow an irreversible step is safe;
-letting it add actions or reach external systems would turn a critique
-into an unreviewed instruction. Holding back the costly step until a
+planted. Letting it stop or delay a step is safe; letting it alter,
+remove or add steps, or reach external systems, would turn a critique
+into an unreviewed instruction, and removing a step can remove a
+safeguard. Holding back the costly step until a
 human has read the verdict is the point of running the review before
 committing. A half-finished migration is worse than either end state,
 which is why the review comes before the first step that changes shared
 state. A Check is text shaped by repository content, so it is treated
 like any other untrusted suggestion before anything runs. Without a
 user, the main agent is the producer and anchored on its plan, so it
-may not argue the advocate down or re-review until a verdict releases
-the step.
+is not the one to argue the advocate down.
 
 **Read-only tools, no web.** The agent's output feeds a main agent that
 can write and run commands. Web access would add a prompt-injection path,
@@ -175,9 +175,10 @@ planted file can't grant anything.
 `advocatus-diaboli`, the office's Latin name, so that "delegate to the
 devil's advocate" can't resolve to the skill invoking itself.
 
-**Invoked selectively.** Devil's advocacy helped on difficult tasks and
-on tasks with one correct answer, slowed additive tasks, and did nothing
-for conjunctive ones.
+**Invoked selectively.** Devil's advocacy improved decisions on tasks
+with one correct answer, slowed additive tasks and did nothing for
+conjunctive ones, and a dissenting group member helped only on difficult
+tasks, at a cost to cohesion.
 The US intelligence community found that not every product suits it.
 Model invocation is limited to costly or hard-to-reverse steps to keep
 Opus calls rare and the advocate worth listening to. The review comes
