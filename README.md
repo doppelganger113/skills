@@ -12,12 +12,14 @@ subagent, which lives as a single file under `agents/`.
 | Skill | What it does |
 |---|---|
 | [go-architecture](skills/go-architecture/SKILL.md) ([design notes](docs/go-architecture.md)) | Architecture rules for Go code that stays clean as it grows from a small tool to a large multi-team codebase: structure in stages added only when a trigger fires, feature packages instead of MVC layers, enforced dependency boundaries, and a tested golden example with lint rules and architecture tests. |
+| [devils-advocate](skills/devils-advocate/SKILL.md) ([design notes](docs/devils-advocate.md)) | `/devils-advocate`: before you commit to a costly or hard-to-reverse plan, design or decision, writes a neutral brief with no authorship or confidence cues, gets a fresh-context challenge from the `advocatus-diaboli` agent, checks every file and line it cites, and shows a verdict (HOLDS, REVISE, RECONSIDER, NEED_INFO) with at most five ranked, evidence-backed objections. Saying a plan holds is a normal outcome. Claude can also invoke it before the first shared-state step of a costly plan; unattended, it may only hold back or defer steps. |
 | [unstuck](skills/unstuck/SKILL.md) ([design notes](docs/unstuck.md)) | `/unstuck`: when a session is stuck, writes a complete brief (goal, constraints, what was tried and ruled out, evidence, secrets redacted), gets a second opinion from the `lateral-thinker` agent, checks every file and line it cites, and changes nothing until you pick a candidate. Claude can also invoke it after repeated failures, including in unattended runs, where it asks nothing and runs only read-only or local, reversible checks. |
 
 ## Agents
 
 | Agent | What it does |
 |---|---|
+| [advocatus-diaboli](agents/advocatus-diaboli.md) ([design notes](docs/devils-advocate.md)) | Read-only, fresh-context devil's advocate: steelmans the proposal, ranks its load-bearing assumptions, attacks the weakest with a premortem and other lenses, and keeps only grounded, decision-relevant, checkable objections, each graded by severity and by whether it is a real concern or only the strongest case against. Used by `devils-advocate`. |
 | [lateral-thinker](agents/lateral-thinker.md) ([design notes](docs/unstuck.md)) | Read-only, fresh-context subagent that finds non-obvious approaches to a stuck problem: bans what was already tried, generates and filters ideas, and returns a verdict plus up to three candidates, each with cited evidence, cost, reversibility and a cheap falsifying test. Used by `unstuck`. |
 
 ## Install
@@ -34,6 +36,22 @@ cp skills/agents/lateral-thinker.md ~/.claude/agents/
 
 For one repository, copy them into that repo's `.claude/skills/` and
 `.claude/agents/` instead and commit both.
+
+**devils-advocate** likewise needs its agent, and works in Claude Code
+only:
+
+```sh
+git clone https://github.com/doppelganger113/skills.git
+mkdir -p ~/.claude/skills ~/.claude/agents
+cp -R skills/skills/devils-advocate ~/.claude/skills/
+cp skills/agents/advocatus-diaboli.md ~/.claude/agents/
+```
+
+Skip the clone if you already have it from above. For one repository,
+copy them into that repo's `.claude/skills/` and `.claude/agents/`
+instead. To update, remove the old `devils-advocate` folder (in
+`~/.claude/skills/` or the repository's `.claude/skills/`) first, so the
+new copy doesn't land inside the old one.
 
 **Claude Code**, for all your projects:
 
