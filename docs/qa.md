@@ -115,7 +115,11 @@ attempt to find the code that would prevent it, and a confidence that
 says whether every step was read, cuts that at the source. The main
 session then checks every citation and runs read-only Checks for P0
 and P1, adding the external signal that self-critique lacks. Refuted
-findings stay visible so the reviewer's error rate is visible too.
+findings stay visible so the reviewer's error rate is visible too. A
+refutation has to cite the code that prevents the trigger, and
+anything less is inconclusive, because in an unattended run the session
+tagging the finding is the one that wrote the change and wants to ship
+it.
 
 **Caps, no style, and CLEAR as a normal result.** A reviewer asked to
 find problems finds some, and a flood of minor ones teaches people to

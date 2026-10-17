@@ -123,6 +123,12 @@
       "files": []
     },
     {
+      "id": 24,
+      "prompt": "Headless run; the reviewer reports a P0 MEDIUM that a webhook handler can process the same event twice. The main session's grep finds no dedupe table or unique constraint, but it can't prove two deliveries happen.",
+      "expected_output": "Tags the finding [INCONCLUSIVE: ...], not [REFUTED], because no preventing code was read and cited. Since a P0 is not REFUTED with a cited path:line, holds back publishing the change and says so.",
+      "files": []
+    },
+    {
       "id": 21,
       "prompt": "/qa code src/  in a Python service using requests and Celery; a task charges a card via requests.post with no timeout and is configured with acks_late=True and autoretry_for=(Exception,).",
       "expected_output": "Passes python.md. Reports that the call can hang forever (no timeout) and that at-least-once delivery plus automatic retries can charge twice without an idempotency key, the latter as P0 HIGH if the trigger path is read. mypy is run only if its config names no plugins and it is installed outside the repository.",
