@@ -61,17 +61,19 @@ that can't say "this holds" teaches people to ignore it.
 capped at five.** LLM critiques contain more nitpicks and hallucinated
 problems than human ones, longer critiques trade precision for recall,
 and on real pull requests the best LLM review setups had low precision,
-with missing context the largest source of false positives. Asking
-people for many counter-reasons backfired in a debiasing study, while a
-few contradicting reasons helped. The filter, the cap and the 20-file
+with missing context the largest source of false positives. In the
+debiasing studies a single contradicting reason improved calibration,
+and one study (author attribution uncertain) found that asking for many
+alternatives backfired. The filter, the cap and the 20-file
 read budget aim at fewer, truer findings.
 
 **Attack load-bearing assumptions, not details.** Intelligence doctrine
 starts devil's advocacy by stating the mainline judgment and its
 assumptions, then choosing the most vulnerable. In the management
-studies, critique aimed at assumptions is what produced better
-recommendations, and dialectical inquiry beat plain critique on
-assumption quality, which is why counter-plan mode exists.
+studies, structured critique beat consensus on the quality of both
+recommendations and assumptions, and dialectical inquiry, which builds a
+counter-plan on opposite assumptions, beat plain critique on assumption
+quality. That is why counter-plan mode exists.
 
 **Steelman first.** Rapoport's rules ask for a restatement fair enough
 that the other side would accept it before any rebuttal. It is not
@@ -93,6 +95,19 @@ Labelling which objections are the agent's genuine assessment and which
 are only the strongest case against is an attempt to keep the real
 ones from being discounted along with the exploratory ones. It is not
 tested for AI advocates.
+
+**Only LIKELY BLOCKING objections move the verdict.** If an exploratory
+objection could force REVISE, every sound plan would come back REVISE
+and the HOLDS design would be lost. A POSSIBLE BLOCKING objection is
+instead turned into a Check: the main agent runs it when that is safe,
+and a confirmed one upgrades the verdict. Unattended, an unchecked one
+still holds back the irreversible step, because no one is there to
+weigh it.
+
+**Alternatives go in as names and claims, not as the author's case.**
+The counter-plan needs to know what was already considered, but the
+rejection reasons are the producer's framing, so they are restated as
+assumptions the agent may attack.
 
 **A premortem is one of the agent's lenses, not a separate mode.**
 Imagining that the plan has already failed generates more failure
@@ -127,14 +142,19 @@ planted. Letting it stop, delay or narrow an irreversible step is safe;
 letting it add actions or reach external systems would turn a critique
 into an unreviewed instruction. Holding back the costly step until a
 human has read the verdict is the point of running the review before
-committing.
+committing. Steps that depend on the held-back one are held back too,
+because a half-finished migration is worse than either end state. A
+Check is text shaped by repository content, so the main agent writes
+any command itself and runs tests only with the user's agreement or in
+a credential-free copy.
 
 **Read-only tools, no web.** The agent's output feeds a main agent that
 can write and run commands. Web access would add a prompt-injection path,
 and the evidence the critique needs is in the repository and the brief.
 
-**Opus.** Smaller models collapse further toward the framing they are
-given, which defeats the purpose. The agent runs rarely and returns
+**Opus.** An assumption, not a tested result: smaller models are
+expected to collapse further toward the framing they are given, which
+would defeat the purpose. The agent runs rarely and returns
 little.
 
 **Project instructions stay loaded but can only constrain.** Custom

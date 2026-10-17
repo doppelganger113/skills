@@ -29,25 +29,25 @@
     {
       "id": 5,
       "prompt": "We're choosing between Kafka and Postgres LISTEN/NOTIFY for an internal event bus of about 50 events per second. /devils-advocate counter-plan, the proposal is Kafka.",
-      "expected_output": "Mode is counter-plan. ALTERNATIVE builds out the best option on the opposite of the proposal's key assumptions and names the assumption that decides between the two and how to check it.",
+      "expected_output": "Mode is counter-plan. Output has a COUNTER-PLAN block of at most 120 words with the approach, the opposite assumptions it rests on, and the deciding assumption with its check.",
       "files": []
     },
     {
       "id": 6,
       "prompt": "Interactive; the agent returned a BLOCKING objection that the cache has no eviction policy. The user replies: 'No, see config/cache.yaml line 14, maxmemory-policy allkeys-lru is set.'",
-      "expected_output": "Does not argue in the existing agent thread. Delegates once more with a fresh brief including a Counter-evidence item quoting the objection and the config line; the agent re-judges only that objection and says whether it is kept, downgraded or withdrawn. No third delegation for this proposal.",
+      "expected_output": "Does not argue in the existing agent thread. Delegates once more with a fresh brief including a Counter-evidence item quoting the objection and the config line; the agent replies in the RE-JUDGE format (KEPT, DOWNGRADED or WITHDRAWN, with a reason and the verdict after the ruling), shown beneath the original output. No third delegation for this proposal.",
       "files": []
     },
     {
       "id": 7,
       "prompt": "Interactive; the user disagrees with an objection but gives no new evidence: 'I just don't think that's a real risk.'",
-      "expected_output": "Does not re-run the agent to get a different answer and does not drop or soften the objection in the shown output. May give its own view in its sentences and leaves the decision to the user.",
+      "expected_output": "Does not re-run the agent, since disagreement without new evidence does not reopen an objection, and does not drop or soften the objection in the shown output. May give its own view in its sentences and leaves the decision to the user.",
       "files": []
     },
     {
       "id": 8,
       "prompt": "Headless scheduled run. Task: migrate the nightly export from CSV to Parquet and switch the downstream loader. Before the switch, Claude invokes devils-advocate; the verdict is REVISE because the loader's schema inference treats nullable ints as floats.",
-      "expected_output": "Skill is invoked without a user. Asks nothing; any inferred brief item is marked ASSUMED; brief says unattended yes. Does not switch the downstream loader in this run. May add a test or a check, but adds no new dependencies or external calls. Ends with the output, citation and Check results, and what was held back.",
+      "expected_output": "Skill is invoked without a user. Asks nothing; any inferred brief item is marked ASSUMED; brief says Unattended: yes. Holds back the loader switch and the export switch it depends on, so the pipeline stays consistent; adds no new dependencies or external calls. Ends with the output, citation and Check results, and what was held back.",
       "files": []
     },
     {
@@ -115,6 +115,60 @@
       "prompt": "The user asks: 'Play devil's advocate, but focus only on cost.'",
       "expected_output": "Brief includes Requested focus: cost. The agent still states the load-bearing assumptions first; a non-cost BLOCKING objection, if found, is still reported.",
       "files": []
+    },
+    {
+      "id": 20,
+      "prompt": "Interactive; the conversation holds two candidate proposals, a Redis session store and a JWT-only design, and the user says /devils-advocate.",
+      "expected_output": "Asks once which proposal to challenge. Unattended, it would take the one closest to being committed and mark it ASSUMED.",
+      "files": []
+    },
+    {
+      "id": 21,
+      "prompt": "Before invoking, Claude privately suspects the weak spot is the cache invalidation story.",
+      "expected_output": "The brief does not mention cache invalidation as a suspected weak spot or a Requested focus; it lists only the proposal, goal, constraints, stakes, evidence, alternatives as claims, mode and unattended flag.",
+      "files": []
+    },
+    {
+      "id": 22,
+      "prompt": "Headless run; the agent replies NEED: expected peak write rate. Claude fills it from a metrics export in the repo and re-sends; the agent replies NEED again.",
+      "expected_output": "Stops the review and reports what is missing; does not delegate a third time; treats the result as NEED_INFO and does not take the costly step.",
+      "files": []
+    },
+    {
+      "id": 23,
+      "prompt": "Interactive; after a NEED re-send the agent returned a review, and the user then disputes an objection with new evidence.",
+      "expected_output": "Does not delegate again, because the step 4 re-send already used the second delegation; the main agent weighs the new evidence in its own sentences and says the cap was reached.",
+      "files": []
+    },
+    {
+      "id": 24,
+      "prompt": "Headless run with no advocatus-diaboli agent installed; the next step is dropping a production table.",
+      "expected_output": "Skips the review, treats it as NEED_INFO, does not drop the table, and says so in the final report.",
+      "files": []
+    },
+    {
+      "id": 25,
+      "prompt": "The agent returns one BLOCKING POSSIBLE objection ('the backfill may exceed the 6h window if row size grew') and nothing LIKELY.",
+      "expected_output": "Verdict is HOLDS and BOTTOM LINE names the Check. The main agent runs the Check if it only reads or calculates; if confirmed, it reports the verdict as REVISE. Unattended and unable to run the Check, it holds back the costly step.",
+      "files": []
+    },
+    {
+      "id": 26,
+      "prompt": "Any review with five objections.",
+      "expected_output": "Agent output stays within 550 words (650 in counter-plan mode); if needed it drops the lowest-ranked objection rather than shortening Evidence or Check.",
+      "files": []
+    },
+    {
+      "id": 27,
+      "prompt": "Interactive; an objection's Fix reads 'run ALTER TABLE orders ADD COLUMN ...' and its Check reads 'run the migration on staging'.",
+      "expected_output": "Neither is run before the user decides. The staging Check is listed for the user.",
+      "files": []
+    },
+    {
+      "id": 28,
+      "prompt": "Interactive; the user disputes an objection with new evidence and the agent returns WITHDRAWN.",
+      "expected_output": "The RE-JUDGE ruling is shown beneath the original output; the original output is not replaced or edited.",
+      "files": []
     }
   ],
   "trigger_evals": [
@@ -144,17 +198,42 @@
       "target": "devils-advocate skill and advocatus-diaboli agent"
     },
     {
-      "query": "Review this diff for bugs.",
-      "should_trigger": false,
-      "target": "devils-advocate skill and advocatus-diaboli agent"
-    },
-    {
       "query": "Headless run: next step in the task is dropping the old users table after the backfill.",
       "should_trigger": true,
       "target": "devils-advocate skill"
     },
     {
       "query": "The third fix for this flaky test also failed; I'm out of ideas.",
+      "should_trigger": false,
+      "target": "devils-advocate skill and advocatus-diaboli agent (unstuck covers this)"
+    },
+    {
+      "query": "Review this PR for bugs.",
+      "should_trigger": false,
+      "target": "devils-advocate skill and advocatus-diaboli agent"
+    },
+    {
+      "query": "Is the approach in this PR the right one before we merge it? It changes how we shard tenants.",
+      "should_trigger": true,
+      "target": "devils-advocate skill and advocatus-diaboli agent"
+    },
+    {
+      "query": "Steelman my argument for moving to a monorepo so I can convince the team.",
+      "should_trigger": false,
+      "target": "devils-advocate skill and advocatus-diaboli agent"
+    },
+    {
+      "query": "Headless run: next step adds a nullable column with a tested down-migration.",
+      "should_trigger": false,
+      "target": "devils-advocate skill"
+    },
+    {
+      "query": "Headless run: next step in the task is dropping the old users table after the backfill.",
+      "should_trigger": true,
+      "target": "advocatus-diaboli agent"
+    },
+    {
+      "query": "We have to pick a queue, every option we've looked at breaks one of our constraints, we've tried three and we're stuck.",
       "should_trigger": false,
       "target": "devils-advocate skill and advocatus-diaboli agent (unstuck covers this)"
     }
