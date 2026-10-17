@@ -1,6 +1,6 @@
 ---
 name: go-architecture
-description: Architecture and design rules for Go code that stays clean as it grows from a small tool to a large multi-team codebase. Use when creating any Go program (service, API, worker or CLI), adding a feature or endpoint, deciding where code goes, adding packages, interfaces, stores or handlers, restructuring or refactoring a Go repo, or reviewing its structure, including requests for "MVC", "clean architecture" or "how should I structure this". Small tools get a minimal flat layout. Not for Go syntax questions or fixes contained inside one function.
+description: Architecture and design rules for Go code that stays clean as it grows from a small tool to a large multi-team codebase. Use when creating any Go program (service, API, worker or CLI), adding a feature or endpoint, deciding where code goes, adding packages, interfaces, stores or handlers, restructuring or refactoring a Go repo, or reviewing its structure, including requests for "MVC", "SOLID", "clean architecture" or "how should I structure this". Small tools get a minimal flat layout. Not for Go syntax questions or fixes contained inside one function.
 ---
 
 # Go architecture
@@ -86,7 +86,7 @@ little, while speculative structure is paid for on every change.
 | A Stage 1 program passes ~2-3k lines or has two unrelated concerns | Stage 2 |
 | A second domain whose rules don't belong with the first | A new package under `internal/` |
 | Two packages need each other | Break the cycle (`references/boundaries.md`), never a `common` package |
-| A second real implementation; a dependency that can't run in tests (third-party API, payments, email, clock); or another domain that is owned by a different team or expected to move out of process | A small interface declared by the consumer |
+| A second real implementation; a dependency that can't run in tests (third-party API, payments, email) or isn't deterministic (clock, IDs); or another domain that is owned by a different team or expected to move out of process | A small interface declared by the consumer; a func (`func() time.Time`) for a stateless source like the clock or an ID generator |
 | A package past ~15-20 files or with unrelated reasons to change | Split by sub-domain, never by layer |
 | A second team, or other domains reaching into a domain's internals | Stage 3 enforcement |
 
@@ -117,9 +117,15 @@ little, while speculative structure is paid for on every change.
   opens connections, builds every component with plain constructors and
   owns the lifecycle. No `init()` side effects, no package-level mutable
   state, no DI containers or service locators.
-- **Accept interfaces, return structs.** Constructors return concrete
-  types. Interfaces are declared by the consumer, sized to what it calls,
-  and justified by a trigger above.
+- **Constructors take dependencies as parameters and return concrete
+  types.** That is all the dependency injection Go needs, wired by hand
+  in `main`. Parameters are concrete types by default. A stateless
+  source that tests must control (clock, ID generator) is a func,
+  `func() time.Time`; a dependency with a contract to document, like
+  `PaymentGateway`, stays an interface.
+  Accept an interface only when a trigger above fires, declared by the
+  consumer and sized to what it calls. The proverb "accept interfaces,
+  return structs" applies at those triggers, not to every parameter.
 - **Cross-domain default: import directly.** Domain A calls
   `*b.Service` from B's exported API. Switch to a consumer-declared
   interface only when the interface trigger above fires; then make its
@@ -146,6 +152,20 @@ Never create top-level `models/`, `controllers/`, `views/`, `services/`
 or `repositories/` packages: every feature change then touches every
 package, related models import each other into cycles, and names
 stutter (`models.User`).
+
+## SOLID, translated to Go
+
+When someone asks for SOLID, apply it as below and say briefly how.
+Add an interface, layer or extension point only when a trigger above
+fires, never because SOLID was asked for.
+
+| Principle | In Go |
+|---|---|
+| Single responsibility | A domain package owns one area of the business; files inside it split by role (`http.go`, `store.go`), and each type and function does one job. Split a package whose parts serve unrelated areas by sub-domain, never by layer. |
+| Open-closed | Extend by adding a type, func or method when a real need appears. No plugin points or base types built in advance. Editing existing code is fine; the compiler finds every caller. |
+| Liskov substitution | Every implementation of an interface, fakes included, honours its documented contract, including errors and edge cases. |
+| Interface segregation | Interfaces are declared by the consumer and hold only the methods it calls. |
+| Dependency inversion | From Stage 2, follow the dependency rules above. A service depending on its own domain's concrete `*Store` is intended. Beyond that, depend on an interface only at a trigger; otherwise use concrete types or funcs, passed to constructors and wired in `main`. No DI containers. |
 
 ## Default stack
 

@@ -22,7 +22,8 @@ on an existing Go codebase.
 - [ ] Packages by feature, not by layer.
 - [ ] No `utils`/`common`/`models`/`types` packages.
 - [ ] Structure matches the stage; nothing without a trigger.
-- [ ] `main` wires everything; no `init()` side effects or globals.
+- [ ] `main` wires everything through plain constructors; no `init()`
+  side effects, globals or DI containers.
 - [ ] Every endpoint lives in the domain that owns its data.
 
 **Boundaries**

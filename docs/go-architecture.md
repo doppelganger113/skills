@@ -42,6 +42,17 @@ narrow slice" of another domain, which is nearly always true. With two
 acceptable styles and no tiebreaker, Claude switched between them from
 one session to the next. Interfaces now need a named trigger.
 
+**SOLID is translated, not adopted or ignored.**
+([SOLID, translated to Go](../skills/go-architecture/SKILL.md#solid-translated-to-go))
+Asked to "follow SOLID", an agent tends to read dependency inversion as
+an interface in front of every dependency and open-closed as extension
+points built in advance: the ceremony the stages exist to prevent.
+Saying nothing leaves the agent to fill the gap from training data.
+Mapping each principle onto rules the skill already has gives one
+answer. The old "accept interfaces, return structs" rule went for the
+same reason: read literally, it put an interface on every constructor
+parameter, against the concrete-by-default rule next to it.
+
 **Adapters live in `http*.go` and `store*.go`; logic files have a strict
 import allow-list.** The naming lets one file-scoped lint rule cover
 every current and future domain with no config edits. The allow-list
@@ -132,6 +143,7 @@ instead of the exact rules. `scripts/check_skills.py` enforces this.
 | Top-level MVC packages | Cycles, stutter, every change touches every package. |
 | Generic `Repository[T]` | Hides the SQL that matters and fits no real query well. |
 | DI containers and service locators | Hide the object graph; `main` wiring by hand is short and explicit. |
+| Dependency inversion as "always depend on abstractions" | An interface per struct, fakes for code that runs fine in tests, and one more indirection to read through. Go interfaces are satisfied implicitly, so a consumer can add one later without touching the provider. |
 | Generated call-sequence mocks | Test the implementation and break on refactors. |
 | `pkg/` in applications | Signals "importable by outsiders" when nothing is. |
 | A separate template repo as the source of truth | Claude usually can't reach it, and two copies drift. The example lives in the skill and CI tests it. |
