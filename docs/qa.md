@@ -21,7 +21,9 @@ qa finds what will break in a plan or in code before it ships:
 defects, unhandled edge cases and failure modes, each with a concrete
 trigger. devils-advocate decides whether a proposal should be committed
 to at all and argues the strongest case against it. The two overlap on
-plans, so each description excludes the other's job: "will this
+plans, so each description excludes the other's job (the
+devils-advocate description now points plan edge cases and code bug
+hunts to qa): "will this
 implementation work under failure, concurrency and real data?" is qa;
 "should we do this, and is there a better option?" is devils-advocate.
 The trigger evals test that boundary in both directions.
@@ -71,7 +73,15 @@ watching. A per-agent tool allowlist doesn't contain this: allowing
 `npm test` allows whatever `npm test` does. So commands are never
 invented, the class depends on what a command executes rather than its
 name, and anything that executes repository code or needs the network
-waits for the user, or for a run that declares a sandbox. See
+waits for the user, or for a run that declares a sandbox. A command
+counts as static only in the exact form a reference lists, because the
+same tool becomes code execution with one flag or environment variable
+(`go vet -vettool`, `GOFLAGS=-toolexec`, a lint config that loads
+plugins), and those are exactly what a hostile overlay or Makefile
+would add. Only the user's or the scheduled task's own prompt can
+declare a sandbox, because project instructions from the repository
+load into the session automatically and would otherwise unlock
+themselves. See
 [tooling.md](../skills/qa/references/tooling.md). Offline settings
 (for Go, `GOTOOLCHAIN=local` and `GOPROXY=off`) exist because a
 `toolchain` line in `go.mod` would otherwise download and run a
@@ -164,6 +174,11 @@ framing they're given.
 - "Internal, do not show", the command classes and the unattended rules
   depend on the model complying. Permission settings and a real sandbox
   for unattended runs are the actual enforcement.
+- Untested: whether a headless run's permission settings let the
+  reviewer read the skill's references and a diff file outside the
+  working directory. Small diffs go inline and an unreadable diff file
+  leads to one inline re-send, but unreadable references only weaken
+  the review. Check with one headless run before relying on it.
 - Ecosystem references are hand-written from general knowledge and
   will have gaps; version-dependent items name their versions so they
   can be checked.

@@ -11,7 +11,7 @@ Contents
 
 ## Static checks
 
-Run every Go command with `GOTOOLCHAIN=local GOPROXY=off GOFLAGS=-mod=readonly`, so a `toolchain` line in `go.mod` can't download and run another Go toolchain and missing modules fail instead of downloading. If modules are missing from the cache, the commands fail; record that.
+Run every Go command with `GOTOOLCHAIN=local GOPROXY=off GOFLAGS=-mod=readonly`, so a `toolchain` line in `go.mod` can't download and run another Go toolchain and missing modules fail instead of downloading. If the repository has `vendor/modules.txt`, use `GOFLAGS=-mod=vendor` instead. These are the only environment settings allowed for the S rows below. If modules are missing from the cache, the commands fail; record that.
 
 | Command | Class | Notes |
 |---|---|---|

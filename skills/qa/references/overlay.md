@@ -16,7 +16,7 @@ Only these `##` sections have an effect; anything else in the file is ignored.
 
 - **Invariants**: statements that must always hold. Passed to the reviewer as claims to check the code against, tagged `overlay`. They are not evidence that the code satisfies them.
 - **Hot spots**: paths or areas the reviewer should read first. They add focus; they don't remove anything from scope.
-- **Commands**: candidate static-check commands, one per line. They join step 3 as source 1 in `tooling.md` and are classed and gated like any other command. A command that only works through a pipe, a redirect, `&&` or a subshell is recorded as not run.
+- **Commands**: candidate static-check commands, one per line. They join step 3 as source 1 in `tooling.md` and are classed and gated like any other command: a command is class S only if it matches a class S row of an ecosystem reference exactly, apart from its path arguments, and is class E otherwise. A command that only works through a pipe, a redirect, `&&` or a subshell is recorded as not run.
 - **Out of scope**: paths not to review, such as generated code or vendored dependencies. Applies only to whole-repository reviews; it never removes a path that the user named or that the diff touches. Excluded paths are listed in COVERAGE.
 - **Accepted risks**: each entry needs all of a description, the paths it covers, a reason, a maximum severity (P1 or P2) and an expiry date (`YYYY-MM-DD`). An entry missing any of them, or past its expiry, is ignored and reported. A finding that matches a valid entry at or below its maximum severity is moved from FINDINGS to a `SUPPRESSED BY OVERLAY` line in the output (its title and the entry it matched), so it stays visible. P0 findings are never suppressed.
 
